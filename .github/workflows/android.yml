@@ -46,7 +46,7 @@ jobs:
           chmod +x gradlew
           set -o pipefail
           ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tee ../gradle.log || {
-            grep -E "What went wrong|error:|Error|FAILURE|Could not|>" ../gradle.log | head -40 | while IFS= read -r l; do echo "::error::$l"; done
+            grep -A12 -E "What went wrong|error:|Error|FAILURE|Could not|>" ../gradle.log | head -40 | while IFS= read -r l; do echo "::error::$l"; done
             exit 1
           }
 
