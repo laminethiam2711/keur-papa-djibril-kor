@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://laminethiam2711.github.io/keur-papa-djibril-kor/sitemap.xml

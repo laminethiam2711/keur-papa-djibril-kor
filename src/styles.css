@@ -1,0 +1,138 @@
+/* ===== Identité visuelle de l'école ===== */
+:root {
+  --bleu-nuit: #13254a;
+  --bleu-nuit-2: #1d3566;
+  --vert: #1f7a4d;
+  --vert-clair: #e7f3ec;
+  --or: #c9973a;
+  --sable: #f6efe2;
+  --fond: #fbf9f5;
+  --texte: #1c2333;
+  --texte-doux: #5a6275;
+  --bordure: #e6e1d6;
+  --rayon: 14px;
+  --ombre: 0 6px 24px rgba(19, 37, 74, 0.08);
+  --largeur: 1140px;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: 'Poppins', system-ui, sans-serif;
+  color: var(--texte);
+  background: var(--fond);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; display: block; }
+a { color: var(--vert); }
+
+h1, h2, h3 { color: var(--bleu-nuit); line-height: 1.2; margin: 0 0 .5em; }
+h1 { font-size: clamp(2rem, 5vw, 3.2rem); }
+h2 { font-size: clamp(1.6rem, 3.5vw, 2.3rem); }
+h3 { font-size: 1.2rem; }
+
+.arabe {
+  font-family: 'Amiri', serif;
+  direction: rtl;
+  color: var(--or);
+}
+
+.conteneur {
+  width: 100%;
+  max-width: var(--largeur);
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.section { padding: 72px 0; }
+.section.sable { background: var(--sable); }
+
+.titre-section { text-align: center; max-width: 680px; margin: 0 auto 40px; }
+.titre-section .arabe { display: block; font-size: 1.5rem; margin-bottom: 4px; }
+.titre-section p { color: var(--texte-doux); }
+
+/* En-tête de page intérieure */
+.bandeau-page {
+  background: linear-gradient(135deg, var(--bleu-nuit), var(--bleu-nuit-2));
+  color: #fff;
+  padding: 64px 0 56px;
+  text-align: center;
+}
+.bandeau-page h1 { color: #fff; margin-bottom: 8px; }
+.bandeau-page .arabe { font-size: 1.6rem; display: block; }
+.bandeau-page p { color: #d6dcea; max-width: 640px; margin: 8px auto 0; }
+
+/* Boutons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 2px solid transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 1rem;
+  transition: transform .15s, background .15s;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn-or { background: var(--or); color: var(--bleu-nuit); }
+.btn-vert { background: var(--vert); color: #fff; }
+.btn-contour { border-color: #fff; color: #fff; }
+.btn-contour-bleu { border-color: var(--bleu-nuit); color: var(--bleu-nuit); }
+
+/* Grilles et cartes */
+.grille { display: grid; gap: 24px; }
+.grille-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.grille-3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.grille-4 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+
+.carte {
+  background: #fff;
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  padding: 28px;
+  box-shadow: var(--ombre);
+}
+
+.pastille {
+  display: inline-block;
+  background: var(--vert-clair);
+  color: var(--vert);
+  font-size: .8rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+/* Formulaires */
+.champ { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.champ label { font-weight: 600; font-size: .9rem; color: var(--bleu-nuit); }
+.champ input, .champ select, .champ textarea {
+  font: inherit;
+  padding: 12px 14px;
+  border: 1px solid var(--bordure);
+  border-radius: 10px;
+  background: #fff;
+}
+.champ input:focus, .champ select:focus, .champ textarea:focus {
+  outline: 2px solid var(--vert);
+  border-color: transparent;
+}
+
+.motif {
+  background-image: radial-gradient(rgba(201, 151, 58, .18) 1.5px, transparent 1.5px);
+  background-size: 22px 22px;
+}
+
+@media (max-width: 640px) {
+  .section { padding: 48px 0; }
+  .carte { padding: 22px; }
+}
