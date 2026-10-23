@@ -51,8 +51,6 @@ import { Component } from '@angular/core';
 export class VieScolaireComponent {
   activites = [
     { type: 'Coran', titre: 'Récitation et concours', texte: 'Séances de récitation, mémorisation et concours de lecture coranique entre classes.' },
-    { type: 'Fêtes', titre: 'Gamou, Tabaski, Korité', texte: 'Les grandes fêtes religieuses sont célébrées avec les élèves, dans la joie et le recueillement.' },
-    { type: 'Kermesse', titre: 'Kermesse et fin d’année', texte: 'Un moment festif avec les familles : spectacles, jeux et remise des prix.' },
     { type: 'Sorties', titre: 'Sorties pédagogiques', texte: 'Visites éducatives pour découvrir Dakar, son patrimoine et la nature.' },
     { type: 'Parents', titre: 'Réunions de parents', texte: 'Des rencontres régulières pour suivre ensemble les progrès de chaque enfant.' },
     { type: 'Sport', titre: 'Sport et jeux', texte: 'Activités physiques et jeux collectifs pour l’équilibre et l’esprit d’équipe.' },
