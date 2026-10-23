@@ -25,6 +25,20 @@ Puis ouvrir http://localhost:4200
 Chaque `push` sur la branche `main` déclenche le déploiement automatique sur GitHub Pages
 (`.github/workflows/deploy.yml`).
 
+## Application Android (APK)
+Le même code est emballé en application Android avec **Capacitor** (`capacitor.config.ts`, dossier `android/`).
+À chaque modification du site, GitHub fabrique un nouvel APK (`.github/workflows/android.yml`).
+
+Lien de téléchargement (toujours la dernière version) :
+https://github.com/laminethiam2711/keur-papa-djibril-kor/releases/latest/download/keur-papa-djibril-kor.apk
+
+Fabriquer l'APK soi-même (Android Studio installé) :
+```bash
+npx ng build --configuration production --base-href /
+npx cap sync android
+npx cap open android
+```
+
 ## Structure
 ```
 src/app/

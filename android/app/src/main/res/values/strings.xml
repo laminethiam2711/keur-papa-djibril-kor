@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Keur Papa Djibril Kor</string>
+    <string name="title_activity_main">Keur Papa Djibril Kor</string>
+    <string name="package_name">sn.keurpapadjibrilkor.app</string>
+    <string name="custom_url_scheme">sn.keurpapadjibrilkor.app</string>
+</resources>

@@ -1,0 +1,59 @@
+# Fabrique l'application Android (.apk) et la publie dans « Releases »
+# Lien de téléchargement fixe :
+# https://github.com/laminethiam2711/keur-papa-djibril-kor/releases/latest/download/keur-papa-djibril-kor.apk
+name: Fabriquer l'APK Android
+
+on:
+  push:
+    branches: [main]
+    paths: ['src/**', 'public/**', 'android/**', 'capacitor.config.ts', 'package.json']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      - run: npm ci
+
+      # Dans l'application, le site est servi depuis la racine « / »
+      - run: npx ng build --configuration production --base-href /
+
+      - run: npx cap sync android
+
+      - name: Compiler l'APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - run: cp android/app/build/outputs/apk/debug/app-debug.apk keur-papa-djibril-kor.apk
+
+      - name: Publier dans Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="v1.0.${{ github.run_number }}"
+          gh release create "$TAG" keur-papa-djibril-kor.apk \
+            --title "Application Android $TAG" \
+            --notes "Application Android de l'École franco-arabe Keur Papa Djibril Kor. Téléchargez keur-papa-djibril-kor.apk sur votre téléphone puis ouvrez-le pour l'installer." \
+            --latest
