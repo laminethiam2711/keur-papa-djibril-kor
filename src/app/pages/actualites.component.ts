@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { ACTUALITES } from '../data/ecole';
+import { Actualite, SupabaseService } from '../services/supabase.service';
 
 @Component({
   selector: 'app-actualites',
@@ -16,11 +16,11 @@ import { ACTUALITES } from '../data/ecole';
 
     <section class="section">
       <div class="conteneur liste">
-        @for (a of actualites; track a.titre) {
+        @for (a of actualites(); track a.titre) {
           <article class="carte actu">
             <div class="date">
-              <strong>{{ a.date | date: 'd' }}</strong>
-              <span>{{ a.date | date: 'MMM y' : '' : 'fr' }}</span>
+              <strong>{{ a.date_publication | date: 'd' }}</strong>
+              <span>{{ a.date_publication | date: 'MMM y' }}</span>
             </div>
             <div>
               <span class="pastille">{{ a.categorie }}</span>
@@ -28,6 +28,8 @@ import { ACTUALITES } from '../data/ecole';
               <p>{{ a.resume }}</p>
             </div>
           </article>
+        } @empty {
+          <p class="vide">{{ chargement() ? 'Chargement…' : 'Aucune actualité pour le moment.' }}</p>
         }
       </div>
     </section>
@@ -39,10 +41,21 @@ import { ACTUALITES } from '../data/ecole';
     .date strong { display: block; font-size: 1.8rem; line-height: 1; color: var(--or); }
     .date span { font-size: .8rem; }
     h2 { font-size: 1.3rem; margin: 10px 0 6px; }
-    p { margin: 0; color: var(--texte-doux); }
+    p { margin: 0; color: var(--texte-doux); white-space: pre-line; }
+    .vide { text-align: center; color: var(--texte-doux); }
     @media (max-width: 520px) { .actu { flex-direction: column; } }
   `,
 })
-export class ActualitesComponent {
-  actualites = ACTUALITES;
+export class ActualitesComponent implements OnInit {
+  private sb = inject(SupabaseService);
+  actualites = signal<Actualite[]>([]);
+  chargement = signal(true);
+
+  async ngOnInit() {
+    try {
+      this.actualites.set(await this.sb.listerActualites());
+    } finally {
+      this.chargement.set(false);
+    }
+  }
 }

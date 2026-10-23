@@ -8,6 +8,14 @@ import { GalerieComponent } from './pages/galerie.component';
 import { InscriptionsComponent } from './pages/inscriptions.component';
 import { ActualitesComponent } from './pages/actualites.component';
 import { ContactComponent } from './pages/contact.component';
+import { ConnexionComponent } from './admin/connexion.component';
+import { AdminLayoutComponent } from './admin/admin-layout.component';
+import { TableauDeBordComponent } from './admin/tableau-de-bord.component';
+import { ActualitesAdminComponent } from './admin/actualites-admin.component';
+import { PhotosAdminComponent } from './admin/photos-admin.component';
+import { InscriptionsAdminComponent } from './admin/inscriptions-admin.component';
+import { MessagesAdminComponent } from './admin/messages-admin.component';
+import { adminGuard } from './admin/admin.guard';
 
 const suffixe = ' — Keur Papa Djibril Kor';
 
@@ -22,5 +30,21 @@ export const routes: Routes = [
   { path: 'inscriptions', component: InscriptionsComponent, title: 'Inscriptions' + suffixe },
   { path: 'actualites', component: ActualitesComponent, title: 'Actualités' + suffixe },
   { path: 'contact', component: ContactComponent, title: 'Contact' + suffixe },
+
+  // ----- Espace administrateur -----
+  { path: 'admin/connexion', component: ConnexionComponent, title: 'Connexion — Administration' },
+  {
+    path: 'admin',
+    component: AdminLayoutComponent,
+    canActivate: [adminGuard],
+    canActivateChild: [adminGuard],
+    children: [
+      { path: '', component: TableauDeBordComponent, title: 'Tableau de bord — Administration' },
+      { path: 'actualites', component: ActualitesAdminComponent, title: 'Actualités — Administration' },
+      { path: 'photos', component: PhotosAdminComponent, title: 'Photos — Administration' },
+      { path: 'inscriptions', component: InscriptionsAdminComponent, title: 'Pré-inscriptions — Administration' },
+      { path: 'messages', component: MessagesAdminComponent, title: 'Messages — Administration' },
+    ],
+  },
   { path: '**', redirectTo: '' },
 ];

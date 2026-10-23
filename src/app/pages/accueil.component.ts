@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
-import { ACTUALITES, CYCLES, ECOLE, ETABLISSEMENTS } from '../data/ecole';
+import { CYCLES, ECOLE, ETABLISSEMENTS } from '../data/ecole';
+import { Actualite, SupabaseService } from '../services/supabase.service';
 
 @Component({
   selector: 'app-accueil',
@@ -108,11 +109,11 @@ import { ACTUALITES, CYCLES, ECOLE, ETABLISSEMENTS } from '../data/ecole';
           <h2>Dernières actualités</h2>
         </div>
         <div class="grille grille-3">
-          @for (a of actualites; track a.titre) {
+          @for (a of actualites(); track a.titre) {
             <article class="carte">
               <span class="pastille">{{ a.categorie }}</span>
               <h3 class="titre-actu">{{ a.titre }}</h3>
-              <time>{{ a.date | date: 'd MMMM y' : '' : 'fr' }}</time>
+              <time>{{ a.date_publication | date: 'd MMMM y' }}</time>
               <p>{{ a.resume }}</p>
             </article>
           }
@@ -188,9 +189,15 @@ import { ACTUALITES, CYCLES, ECOLE, ETABLISSEMENTS } from '../data/ecole';
     }
   `,
 })
-export class AccueilComponent {
+export class AccueilComponent implements OnInit {
+  private sb = inject(SupabaseService);
   ecole = ECOLE;
   cycles = CYCLES;
   etablissements = ETABLISSEMENTS;
-  actualites = ACTUALITES;
+  actualites = signal<Actualite[]>([]);
+
+  async ngOnInit() {
+    // Les 3 actualités les plus récentes
+    this.actualites.set((await this.sb.listerActualites()).slice(0, 3));
+  }
 }

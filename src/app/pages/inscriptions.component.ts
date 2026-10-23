@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ECOLE, ETABLISSEMENTS } from '../data/ecole';
+import { SupabaseService } from '../services/supabase.service';
 
-// Version 1 : la pré-inscription est envoyée sur le WhatsApp de l'école.
-// Version 2 (avec l'API Laravel) : elle sera enregistrée en base et visible dans l'espace admin.
+// La pré-inscription est enregistrée dans la base (visible dans l'espace admin).
+// Si Supabase n'est pas encore configuré, elle est envoyée sur le WhatsApp de l'école.
 @Component({
   selector: 'app-inscriptions',
   imports: [FormsModule],
@@ -56,8 +57,15 @@ import { ECOLE, ETABLISSEMENTS } from '../data/ecole';
             <input id="parent" name="parent" [(ngModel)]="form.parent" required></div>
           <div class="champ"><label for="tel">Téléphone du parent *</label>
             <input id="tel" name="tel" type="tel" [(ngModel)]="form.tel" required placeholder="77 000 00 00"></div>
-          <button class="btn btn-vert plein" [disabled]="f.invalid">Envoyer via WhatsApp</button>
-          <p class="note">Le message s'ouvre dans WhatsApp, il vous suffit d'appuyer sur « Envoyer ».</p>
+          @if (envoye()) {
+            <div class="succes">Merci ! Votre demande a bien été reçue. L'école vous rappellera très vite.</div>
+          } @else {
+            @if (erreur()) { <div class="erreur">{{ erreur() }}</div> }
+            <button class="btn btn-vert plein" [disabled]="f.invalid || envoi()">
+              {{ envoi() ? 'Envoi…' : (sb.actif ? 'Envoyer ma demande' : 'Envoyer via WhatsApp') }}
+            </button>
+            @if (!sb.actif) { <p class="note">Le message s'ouvre dans WhatsApp, il vous suffit d'appuyer sur « Envoyer ».</p> }
+          }
         </form>
       </div>
     </section>
@@ -70,6 +78,8 @@ import { ECOLE, ETABLISSEMENTS } from '../data/ecole';
     .note { color: var(--texte-doux); font-size: .88rem; }
     .plein { width: 100%; justify-content: center; }
     button[disabled] { opacity: .5; cursor: not-allowed; transform: none; }
+    .succes { background: var(--vert-clair); color: var(--vert); padding: 16px; border-radius: 10px; font-weight: 600; }
+    .erreur { background: #fdecea; color: #a12a1f; padding: 12px; border-radius: 10px; margin-bottom: 12px; }
   `,
 })
 export class InscriptionsComponent {
@@ -78,12 +88,33 @@ export class InscriptionsComponent {
   niveaux = ['Crèche', 'Petite section', 'Moyenne section', 'Grande section', 'CI', 'CP', 'CE1', 'CE2', 'CM1', 'CM2'];
   form = { enfant: '', naissance: '', niveau: '', etab: '', parent: '', tel: '' };
 
-  envoyer() {
+  sb = inject(SupabaseService);
+  envoi = signal(false);
+  envoye = signal(false);
+  erreur = signal('');
+
+  async envoyer() {
     const f = this.form;
-    const message =
-      `Pré-inscription ${ECOLE.anneeScolaire}\n` +
-      `Enfant : ${f.enfant}\nNé(e) le : ${f.naissance}\nNiveau : ${f.niveau}\n` +
-      `Établissement : ${f.etab}\nParent : ${f.parent}\nTéléphone : ${f.tel}`;
-    window.open(`https://wa.me/${ECOLE.whatsapp}?text=${encodeURIComponent(message)}`, '_blank');
+    if (!this.sb.actif) {
+      const message =
+        `Pré-inscription ${ECOLE.anneeScolaire}\n` +
+        `Enfant : ${f.enfant}\nNé(e) le : ${f.naissance}\nNiveau : ${f.niveau}\n` +
+        `Établissement : ${f.etab}\nParent : ${f.parent}\nTéléphone : ${f.tel}`;
+      window.open(`https://wa.me/${ECOLE.whatsapp}?text=${encodeURIComponent(message)}`, '_blank');
+      return;
+    }
+    this.envoi.set(true);
+    this.erreur.set('');
+    try {
+      await this.sb.envoyerInscription({
+        enfant: f.enfant.trim(), date_naissance: f.naissance, niveau: f.niveau,
+        etablissement: f.etab, parent: f.parent.trim(), telephone: f.tel.trim(),
+      });
+      this.envoye.set(true);
+    } catch {
+      this.erreur.set('L’envoi a échoué. Vérifiez votre connexion ou appelez-nous.');
+    } finally {
+      this.envoi.set(false);
+    }
   }
 }
