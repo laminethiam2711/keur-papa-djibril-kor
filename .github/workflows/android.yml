@@ -27,7 +27,7 @@ jobs:
           node-version: 22
           cache: npm
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 21
@@ -44,7 +44,11 @@ jobs:
         working-directory: android
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+          set -o pipefail
+          ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tee ../gradle.log || {
+            grep -E "What went wrong|error:|Error|FAILURE|Could not|>" ../gradle.log | head -40 | while IFS= read -r l; do echo "::error::$l"; done
+            exit 1
+          }
 
       - run: cp android/app/build/outputs/apk/debug/app-debug.apk keur-papa-djibril-kor.apk
 
