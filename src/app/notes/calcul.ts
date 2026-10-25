@@ -132,3 +132,15 @@ export function nombre(x: number | null | undefined, decimales = 2): string {
   if (x === null || x === undefined) return '';
   return Number.isInteger(x) ? String(x) : x.toFixed(decimales).replace(/0+$/, '').replace(/\.$/, '').replace('.', ',');
 }
+
+/** Appréciation d'une note ou d'une moyenne, selon la part du maximum obtenue. */
+export type Niveau = 'tb' | 'b' | 'ab' | 'p' | 'i';
+export function appreciation(note: number | null | undefined, max: number): { niveau: Niveau; texte: string } | null {
+  if (note === null || note === undefined || !max) return null;
+  const r = note / max;
+  if (r >= 0.8) return { niveau: 'tb', texte: 'Très bien' };
+  if (r >= 0.7) return { niveau: 'b', texte: 'Bien' };
+  if (r >= 0.6) return { niveau: 'ab', texte: 'Assez bien' };
+  if (r >= 0.5) return { niveau: 'p', texte: 'Passable' };
+  return { niveau: 'i', texte: 'Insuffisant' };
+}

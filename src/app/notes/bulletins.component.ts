@@ -61,7 +61,7 @@ import { Classe, NotesService } from './notes.service';
             <tbody>
               @for (l of d.lignes; track l.eleve.id) {
                 <tr>
-                  <td class="g"><strong>{{ l.eleve.prenom }} {{ l.eleve.nom }}</strong></td>
+                  <td class="g"><a class="nom" [routerLink]="['/admin/eleve', id(), l.eleve.id]"><strong>{{ l.eleve.prenom }} {{ l.eleve.nom }}</strong></a></td>
                   @for (r of l.periodes; track $index) {
                     <td>{{ nombre(r?.moyenne) || '—' }} <small>{{ formatRang(r?.rang ?? null, r?.exAequo) }}</small></td>
                   }
@@ -104,6 +104,8 @@ import { Classe, NotesService } from './notes.service';
     th { background: var(--sable); color: var(--bleu-nuit); padding: 10px; text-align: center; }
     td { padding: 8px 10px; border-top: 1px solid var(--bordure); text-align: center; }
     .g { text-align: left; }
+    .nom { color: var(--texte); text-decoration: none; }
+    .nom:hover { color: var(--vert); text-decoration: underline; }
     small { color: var(--texte-doux); }
     select { font: inherit; font-size: .85rem; padding: 4px 6px; border: 1px solid var(--bordure); border-radius: 8px; }
     .mini { font-size: .85rem; border: 1px solid var(--bordure); border-radius: 8px; padding: 4px 10px; text-decoration: none; white-space: nowrap; }

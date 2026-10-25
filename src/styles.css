@@ -136,3 +136,77 @@ h3 { font-size: 1.2rem; }
   .section { padding: 48px 0; }
   .carte { padding: 22px; }
 }
+
+/* ===== Plateforme de notes : éléments communs (préfixe np-) ===== */
+.np-page { display: flex; flex-direction: column; gap: 20px; }
+.np-fil { display: inline-flex; align-items: center; gap: 6px; color: var(--vert); text-decoration: none; font-weight: 500; font-size: .9rem; }
+.np-titre { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+.np-titre h1 { font-size: 1.75rem; margin: 2px 0 0; letter-spacing: -.01em; }
+.np-titre p { margin: 2px 0 0; color: var(--texte-doux); }
+
+/* Sélecteur segmenté (comme « Semestre 1 | Semestre 2 | Année ») */
+.np-segment { display: inline-flex; background: #e6e9ef; border-radius: 12px; padding: 4px; gap: 2px; flex-wrap: wrap; }
+.np-segment button {
+  font: inherit; font-size: .9rem; font-weight: 500; border: 0; background: transparent; color: var(--texte-doux);
+  padding: 8px 16px; border-radius: 9px; cursor: pointer; white-space: nowrap;
+}
+.np-segment button.actif { background: #fff; color: var(--bleu-nuit); font-weight: 600; box-shadow: 0 1px 3px rgba(19,37,74,.15); }
+
+/* Carte avec bandeau bleu nuit */
+.np-carte { background: #fff; border-radius: 16px; overflow: hidden; border: 1px solid #e3e6ec; box-shadow: 0 4px 20px rgba(19,37,74,.06); }
+.np-bandeau {
+  background: var(--bleu-nuit); color: #fff; padding: 22px 28px;
+  display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+}
+.np-bandeau h2 { color: #fff; margin: 0; font-size: 1.2rem; }
+.np-bandeau p { margin: 2px 0 0; color: #b9c3d8; font-size: .9rem; }
+.np-badge-contour { border: 1px solid rgba(255,255,255,.35); border-radius: 10px; padding: 10px 16px; font-weight: 600; }
+
+/* Bande d'informations (Nom, Matricule, Classe…) */
+.np-infos { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); background: #f6f8fb; border-bottom: 1px solid #e3e6ec; }
+.np-infos > div { padding: 14px 22px; border-right: 1px solid #e3e6ec; }
+.np-infos > div:last-child { border-right: 0; }
+.np-libelle { display: block; font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #6b7387; }
+.np-valeur { font-weight: 700; color: var(--texte); }
+
+/* Tableaux */
+.np-table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.np-table th {
+  text-align: left; font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+  color: #6b7387; padding: 14px 18px; border-bottom: 1px solid #e3e6ec; background: #fbfcfd; white-space: nowrap;
+}
+.np-table td { padding: 13px 18px; border-bottom: 1px solid #eef0f4; }
+.np-table tr:last-child td { border-bottom: 0; }
+.np-table tbody tr:hover td { background: #fafbfd; }
+.np-num { text-align: right !important; font-variant-numeric: tabular-nums; }
+.np-sous { display: block; color: var(--texte-doux); font-size: .82rem; }
+
+/* Pastilles d'appréciation */
+.np-pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: .78rem; font-weight: 600; white-space: nowrap; }
+.np-tb { background: #dff3e7; color: #17663e; }
+.np-b { background: #e4f1ea; color: #1f7a4d; }
+.np-ab { background: #e8eefb; color: #2b4f9c; }
+.np-p { background: #fff3dc; color: #8a5a00; }
+.np-i { background: #fde7e5; color: #a12a1f; }
+.np-note-tb, .np-note-b { color: #1f7a4d; }
+.np-note-p { color: #8a5a00; }
+.np-note-i { color: #a12a1f; }
+
+/* Pied de bulletin : moyenne, total, rang… */
+.np-resume { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); border-top: 2px solid var(--bleu-nuit); }
+.np-resume > div { padding: 16px 22px; border-right: 1px solid #e3e6ec; }
+.np-resume > div:last-child { border-right: 0; }
+.np-resume .principal { background: #f6f8fb; }
+.np-grand { font-size: 2rem; font-weight: 700; color: var(--bleu-nuit); line-height: 1.1; }
+.np-grand small { font-size: .95rem; color: var(--texte-doux); font-weight: 500; }
+.np-note-bas { font-size: .82rem; color: var(--texte-doux); padding: 12px 22px; background: #fbfcfd; border-top: 1px solid #eef0f4; margin: 0; }
+
+/* Boutons secondaires */
+.np-btn { display: inline-flex; align-items: center; gap: 6px; font: inherit; font-size: .9rem; font-weight: 600; padding: 9px 16px;
+  border-radius: 10px; border: 1px solid #d5dae3; background: #fff; color: var(--bleu-nuit); cursor: pointer; text-decoration: none; }
+.np-btn:hover { border-color: var(--bleu-nuit); }
+.np-btn.plein { background: var(--bleu-nuit); color: #fff; border-color: var(--bleu-nuit); }
+.np-btn.vert { background: var(--vert); color: #fff; border-color: var(--vert); }
+.np-btn.or { background: var(--or); color: var(--bleu-nuit); border-color: var(--or); }
+.np-btn[disabled] { opacity: .5; cursor: not-allowed; }
+.np-erreur { background: #fdecea; color: #a12a1f; padding: 12px 16px; border-radius: 10px; margin: 0; }

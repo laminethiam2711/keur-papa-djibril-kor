@@ -55,6 +55,7 @@ export const routes: Routes = [
       { path: 'classes', loadComponent: () => import('./notes/classes.component').then((m) => m.ClassesComponent), title: 'Classes et notes — Administration' },
       { path: 'classes/:id', loadComponent: () => import('./notes/classe-detail.component').then((m) => m.ClasseDetailComponent), title: 'Élèves — Administration' },
       { path: 'saisie/:id', loadComponent: () => import('./notes/saisie.component').then((m) => m.SaisieComponent), title: 'Saisie des notes — Administration' },
+      { path: 'eleve/:classe/:eleve', loadComponent: () => import('./notes/bulletin-eleve.component').then((m) => m.BulletinEleveComponent), title: 'Bulletin de l’élève — Administration' },
       { path: 'bulletins/:id', loadComponent: () => import('./notes/bulletins.component').then((m) => m.BulletinsComponent), title: 'Bulletins — Administration' },
     ],
   },
