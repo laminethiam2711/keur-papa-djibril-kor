@@ -68,7 +68,7 @@ interface Enseignant { email: string; nom: string; classes: number[] }
         <div class="aide carte">
           <b>Bon à savoir</b>
           <ul>
-            <li>Si Supabase demande la confirmation des e-mails, l'enseignant reçoit un lien à ouvrir avant sa première connexion.</li>
+            <li>Si la création de compte est bloquée : créez-le dans Supabase → Authentication → Users → Add user (cochez « Auto Confirm User »), puis attribuez ses classes ici avec le mot de passe vide.</li>
             <li>Mot de passe oublié : Supabase → Authentication → Users → l'enseignant → « Send password recovery ».</li>
             <li>« Retirer l'accès » enlève ses classes : il ne voit plus rien, même s'il se connecte.</li>
           </ul>
@@ -180,6 +180,11 @@ export class EnseignantsAdminComponent implements OnInit {
         const temp = createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.cleAnon,
           { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false, storageKey: 'kpdk-creation-compte' } });
         const { data, error } = await temp.auth.signUp({ email, password: this.form.motDePasse, options: { data: { nom } } });
+        if (error && /signups? not allowed|disabled/i.test(error.message)) {
+          throw new Error('Supabase n’autorise pas la création de comptes depuis le site (c’est plus sûr). Créez le compte dans Supabase : '
+            + 'Authentication → Users → Add user → Create new user (e-mail + mot de passe, cochez « Auto Confirm User »). '
+            + 'Revenez ici, laissez le mot de passe VIDE et cliquez sur « Créer le compte » pour lui attribuer ses classes.');
+        }
         if (error && !/already|registered|exists/i.test(error.message)) throw new Error('Création du compte impossible : ' + error.message);
         compte = error ? ' (le compte existait déjà)' : data.session ? '' : ' — un e-mail de confirmation lui a été envoyé';
       }
