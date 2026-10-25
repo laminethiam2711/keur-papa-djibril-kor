@@ -53,7 +53,9 @@ Règles de calcul (`src/app/notes/calcul.ts`) :
 - rang : les ex aequo ont le même rang ; moyenne annuelle = moyenne des trimestres.
 
 Les matières de chaque relevé sont dans `src/app/notes/modeles.ts`.
-Mise en place : exécuter `supabase/notes.sql` dans le SQL Editor de Supabase (une seule fois).
+Mise en place : exécuter `supabase/notes.sql` puis `supabase/matricules.sql` dans le SQL Editor de Supabase (une seule fois).
+
+Matricules : attribués automatiquement par la base (`KPDK-2026-0001`…), compteur par année, doublons interdits.
 
 ## Structure
 ```

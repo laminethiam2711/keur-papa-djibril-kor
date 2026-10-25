@@ -95,7 +95,8 @@ export class NotesService {
       this.ok(await this.db.from('eleves').update(v).eq('id', id));
       return;
     }
-    // Nouvel élève : matricule attribué automatiquement
+    // Nouvel élève : matricule attribué automatiquement.
+    // Si supabase/matricules.sql est installé, la base remplace ce numéro par le sien (sans risque de doublon).
     const [matricule] = await this.matricules(annee, 1);
     this.ok(await this.db.from('eleves').insert({ ...v, matricule }));
   }
@@ -105,6 +106,9 @@ export class NotesService {
   }
   /** Donne un matricule aux élèves de la classe qui n'en ont pas encore. */
   async completerMatricules(classeId: number, annee: string): Promise<number> {
+    // Avec la protection de la base (supabase/matricules.sql), c'est la base qui numérote
+    const rpc = await this.db.rpc('completer_matricules', { p_classe: classeId });
+    if (!rpc.error) return rpc.data as number;
     const sans = (await this.eleves(classeId)).filter((e) => !e.matricule?.trim());
     if (!sans.length) return 0;
     const numeros = await this.matricules(annee, sans.length);
