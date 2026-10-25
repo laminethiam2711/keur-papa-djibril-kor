@@ -39,6 +39,13 @@ export const routes: Routes = [
     title: 'Codes parents',
   },
 
+  {
+    // Badges élèves (porte-badge 95 × 124 mm, 4 par page A4)
+    path: 'admin/badges/:id',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./notes/badges.component').then((m) => m.BadgesComponent),
+    title: 'Badges élèves',
+  },
   // ----- Espace administrateur -----
   { path: 'admin/connexion', component: ConnexionComponent, title: 'Connexion — Administration' },
   {

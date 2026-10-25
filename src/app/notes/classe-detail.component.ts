@@ -75,6 +75,7 @@ import { Classe, Eleve, NotesService } from './notes.service';
               <input class="recherche" type="search" placeholder="Rechercher un élève…" [ngModel]="recherche()" (ngModelChange)="recherche.set($event)">
               <span class="liste-droite">
                 <a class="np-btn" target="_blank" [href]="lienCodes()" title="Fiches à découper avec le matricule et le code de chaque élève">🖨 Codes parents</a>
+                <a class="np-btn" target="_blank" [href]="lienBadges()" title="Badges 95 × 124 mm avec QR code, 4 par page A4">🪪 Badges</a>
                 <span>{{ elevesFiltres().length }} élève{{ elevesFiltres().length > 1 ? 's' : '' }}</span>
               </span>
             </div>
@@ -327,6 +328,12 @@ export class ClasseDetailComponent implements OnInit {
   lienCodes() {
     const base = document.querySelector('base')?.getAttribute('href') ?? '/';
     return `${base}admin/codes-parents/${this.id()}`;
+  }
+
+  /** Lien vers les badges imprimables de la classe. */
+  lienBadges() {
+    const base = document.querySelector('base')?.getAttribute('href') ?? '/';
+    return `${base}admin/badges/${this.id()}`;
   }
 
   /** Message WhatsApp au parent avec le lien, le matricule et le code. */

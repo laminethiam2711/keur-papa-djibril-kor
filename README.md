@@ -119,3 +119,8 @@ Les données sont stockées dans **Supabase** (base PostgreSQL + connexion + sto
 - Exécuter `supabase/absences.sql` une fois, puis ré-exécuter `supabase/parents.sql`.
 - Administration → Notes et bulletins → bouton **Appel** de la classe : Présent / Absent / Retard, moment, justifié, motif (enregistré à chaque clic).
 - Les totaux par trimestre (en demi-journées) apparaissent sur les bulletins (écran et papier), dans l'espace parents et dans la sauvegarde Excel (feuille « Absences »).
+
+## Badges élèves
+
+- Classe → **🪪 Badges** : un badge par élève au format porte-badge B3 (95 × 124 mm, vertical), 4 par page A4.
+- Nom, prénom, section, année, matricule, QR code (= matricule), lieu et téléphones selon l'établissement. Case « PHOTO » pour coller la photo.
