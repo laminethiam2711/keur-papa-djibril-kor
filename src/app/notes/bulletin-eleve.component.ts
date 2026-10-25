@@ -1,6 +1,7 @@
 import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { BulletinCode, LIBELLES_BULLETIN, libellePeriode, PERIODES } from './modeles';
+import { AbsencesService } from '../absences/absences.service';
 import { chargerBulletins, DonneesBulletin } from './donnees-bulletin';
 import { Classe, NotesService } from './notes.service';
 import { BulletinCarteComponent } from './bulletin-carte.component';
@@ -71,6 +72,7 @@ export class BulletinEleveComponent implements OnInit {
   classe = input.required<string>();
   eleve = input.required<string>();
   private ns = inject(NotesService);
+  private abs = inject(AbsencesService);
   private router = inject(Router);
   libelles = LIBELLES_BULLETIN;
   periodes = PERIODES;
@@ -88,7 +90,7 @@ export class BulletinEleveComponent implements OnInit {
 
   async charger() {
     try {
-      this.donnees.set(await chargerBulletins(this.ns, Number(this.classe()), this.bulletin()));
+      this.donnees.set(await chargerBulletins(this.ns, Number(this.classe()), this.bulletin(), this.abs));
     } catch (e) {
       this.erreur.set((e as Error).message);
     }

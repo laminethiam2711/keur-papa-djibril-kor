@@ -4,6 +4,8 @@ import { BulletinCode, LIBELLES_BULLETIN, libellePeriode, maxMatiere, PERIODES, 
 import { cle } from './calcul';
 import { chargerBulletins, DonneesBulletin } from './donnees-bulletin';
 import { Classe, NotesService } from './notes.service';
+import { AbsencesService } from '../absences/absences.service';
+import { libelleMoment } from '../absences/regles';
 
 type Cellule = { value?: string | number | null; type?: StringConstructor | NumberConstructor; fontWeight?: 'bold';
   textColor?: string; backgroundColor?: string; align?: 'center' | 'left' | 'right' } | null;
@@ -16,6 +18,7 @@ const CLE_DERNIERE = 'kpdk-derniere-sauvegarde';
 export class ExportService {
   private sb = inject(SupabaseService);
   private ns = inject(NotesService);
+  private abs = inject(AbsencesService);
 
   /** Date de la dernière sauvegarde faite depuis cet ordinateur (ou null). */
   derniereSauvegarde(): Date | null {
@@ -77,6 +80,16 @@ export class ExportService {
       }
     }
 
+    // Absences et retards (si le module est installé)
+    const lignesAbs: Cellule[][] = [this.entete(['Date', 'Matricule', 'Élève', 'Classe', 'Type', 'Moment', 'Justifiée', 'Motif'])];
+    for (const c of classes) {
+      for (const a of await this.abs.classeSiDisponible(c.id!)) {
+        const e = nomsEleves.get(a.eleve_id);
+        lignesAbs.push([this.t(this.date(a.date)), this.t(e?.matricule), this.t(e?.nom), this.t(c.nom),
+          this.t(a.type === 'absence' ? 'Absence' : 'Retard'), this.t(libelleMoment(a.moment)), this.t(a.justifie ? 'Oui' : 'Non'), this.t(a.motif)]);
+      }
+    }
+
     await this.ecrire([
       { sheet: 'Élèves', data: lignesEleves, columns: this.largeurs([18, 16, 16, 12, 14, 16, 12, 22, 11]), stickyRowsCount: 1 },
       { sheet: 'Moyennes', data: lignesMoy, columns: this.largeurs([12, 10, 18, 24, 9, 8, 9, 8, 9, 8, 12, 11, 26]), stickyRowsCount: 1 },
@@ -84,6 +97,7 @@ export class ExportService {
       { sheet: 'Classes', data: lignesClasses, columns: this.largeurs([12, 12, 11, 22, 18, 11, 14, 8, 8]), stickyRowsCount: 1 },
       { sheet: 'Pré-inscriptions', data: lignesInsc, columns: this.largeurs([12, 22, 12, 14, 26, 20, 16, 11]), stickyRowsCount: 1 },
       { sheet: 'Paiements', data: lignesPaie, columns: this.largeurs([11, 14, 18, 24, 10, 12, 8, 15, 13, 14, 24]), stickyRowsCount: 1 },
+      { sheet: 'Absences', data: lignesAbs, columns: this.largeurs([11, 18, 24, 12, 10, 11, 9, 30]), stickyRowsCount: 1 },
       { sheet: 'Messages', data: lignesMsg, columns: this.largeurs([12, 20, 16, 60, 6]), stickyRowsCount: 1 },
     ], `Sauvegarde-KPDK-${this.aujourdhui()}.xlsx`);
 

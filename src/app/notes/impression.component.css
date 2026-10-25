@@ -143,3 +143,6 @@
   .page:last-of-type { break-after: auto; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+
+/* Assiduité (absences / retards) dans les cases d'observation */
+.assid { display: block; margin-top: 3px; font-size: 7.5pt; font-style: normal; color: #444; }

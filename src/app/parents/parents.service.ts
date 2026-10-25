@@ -4,6 +4,7 @@ import { Appreciation, Classe, Eleve } from '../notes/notes.service';
 import { NoteLigne } from '../notes/calcul';
 import { BulletinCode } from '../notes/modeles';
 import { Paiement, Tarif } from '../paiements/regles';
+import { Absence } from '../absences/regles';
 
 export interface DonneesParent {
   eleve: Eleve;
@@ -13,6 +14,7 @@ export interface DonneesParent {
   appreciations: Appreciation[];
   tarifs: Tarif[];
   paiements: Paiement[];
+  absences?: Omit<Absence, 'eleve_id' | 'classe_id'>[]; // si le module Absences est installé
 }
 
 const CLE = 'kpdk-parent';

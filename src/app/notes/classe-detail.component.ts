@@ -25,6 +25,7 @@ import { Classe, Eleve, NotesService } from './notes.service';
             </div>
             <a class="np-btn vert" [routerLink]="['/admin/saisie', c.id]">Saisir les notes</a>
             <a class="np-btn or" [routerLink]="['/admin/bulletins', c.id]">Bulletins</a>
+            <a class="np-btn" [routerLink]="['/admin/appel', c.id]">📋 Appel</a>
           </div>
         </div>
 

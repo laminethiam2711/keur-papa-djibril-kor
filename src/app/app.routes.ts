@@ -71,6 +71,7 @@ export const routes: Routes = [
       { path: 'classes/:id', loadComponent: () => import('./notes/classe-detail.component').then((m) => m.ClasseDetailComponent), title: 'Élèves — Administration' },
       { path: 'saisie/:id', loadComponent: () => import('./notes/saisie.component').then((m) => m.SaisieComponent), title: 'Saisie des notes — Administration' },
       { path: 'eleve/:classe/:eleve', loadComponent: () => import('./notes/bulletin-eleve.component').then((m) => m.BulletinEleveComponent), title: 'Bulletin de l’élève — Administration' },
+      { path: 'appel/:id', loadComponent: () => import('./absences/appel.component').then((m) => m.AppelComponent), title: 'Absences et retards — Administration' },
       // ----- Paiements de la scolarité -----
       { path: 'paiements', loadComponent: () => import('./paiements/paiements.component').then((m) => m.PaiementsComponent), title: 'Paiements — Administration' },
       { path: 'paiements/eleve/:id', loadComponent: () => import('./paiements/paiement-eleve.component').then((m) => m.PaiementEleveComponent), title: 'Paiements de l’élève — Administration' },

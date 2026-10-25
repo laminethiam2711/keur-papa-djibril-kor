@@ -113,3 +113,9 @@ Les données sont stockées dans **Supabase** (base PostgreSQL + connexion + sto
 - Le public peut seulement *envoyer* une inscription ou un message.
 - Seuls les comptes présents dans la table `admins` peuvent modifier le contenu.
 - Tant que `supabase.config.ts` est vide, le site fonctionne en mode simple (contenu fixe + WhatsApp).
+
+## Absences et retards
+
+- Exécuter `supabase/absences.sql` une fois, puis ré-exécuter `supabase/parents.sql`.
+- Administration → Notes et bulletins → bouton **Appel** de la classe : Présent / Absent / Retard, moment, justifié, motif (enregistré à chaque clic).
+- Les totaux par trimestre (en demi-journées) apparaissent sur les bulletins (écran et papier), dans l'espace parents et dans la sauvegarde Excel (feuille « Absences »).

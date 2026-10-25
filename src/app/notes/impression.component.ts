@@ -3,6 +3,8 @@ import { DatePipe, NgTemplateOutlet } from '@angular/common';
 import { ECOLE, ETABLISSEMENTS } from '../data/ecole';
 import { BulletinCode, DECISIONS, maxMatiere, Matiere, PERIODES, toutesMatieres } from './modeles';
 import { baremeMoyenne, cle, formatRang, nombre } from './calcul';
+import { AbsencesService } from '../absences/absences.service';
+import { ResumeAssiduite } from '../absences/regles';
 import { chargerBulletins, DonneesBulletin, LigneBulletin } from './donnees-bulletin';
 import { NotesService } from './notes.service';
 
@@ -48,6 +50,10 @@ const TERMS_EN = ['FIRST TERM EXAMINATION', 'SECOND TERM EXAMINATION', 'THIRD TE
                   <tr><th>RANG</th>
                     @for (r of l.periodes; track $index) { <td>{{ rang(r?.rang, r?.exAequo, d) }}</td> }
                     <td><b>{{ rang(l.annuel.rang, l.annuel.exAequo, d) }}</b></td></tr>
+                  @if (l.assiduite) {
+                    <tr><th>ABSENCES / RETARDS</th>
+                      @for (r of l.assiduite; track $index) { <td class="petit-texte">{{ assid(r) }}</td> }</tr>
+                  }
                   <tr class="haut"><th>DÉCISION DU CONSEIL</th>
                     @for (o of l.observations; track $index) { <td class="petit-texte">{{ o }}</td> }
                     <td class="petit-texte">{{ l.decision }}</td></tr>
@@ -96,7 +102,7 @@ const TERMS_EN = ['FIRST TERM EXAMINATION', 'SECOND TERM EXAMINATION', 'THIRD TE
                       <td class="g">{{ mat.nom }}</td><td>{{ max(mat, d) }}</td>
                       @for (p of periodes; track p; let pi = $index) {
                         <td>{{ note(d, l, p, 'composition', mat) }}</td>
-                        @if (di === 0 && mi === 0) { <td class="obs-cell" [attr.rowspan]="nbMatieres(d) + 3">{{ l.observations[pi] }}</td> }
+                        @if (di === 0 && mi === 0) { <td class="obs-cell" [attr.rowspan]="nbMatieres(d) + 3">{{ l.observations[pi] }}@if (l.assiduite) { <span class="assid">{{ assid(l.assiduite[pi]) }}</span> }</td> }
                       }
                     </tr>
                   }
@@ -131,7 +137,7 @@ const TERMS_EN = ['FIRST TERM EXAMINATION', 'SECOND TERM EXAMINATION', 'THIRD TE
                       @if (di === 0 && mi === 0) {
                         <td class="obs-cell" [attr.rowspan]="nbMatieres(d) + 3">
                           @for (o of l.observations; track $index) {
-                            @if (o) { <p class="obs-trim"><b>{{ $index === 0 ? '1er' : ($index + 1) + 'e' }} trim. :</b> {{ o }}</p> }
+                            @if (o || l.assiduite) { <p class="obs-trim"><b>{{ $index === 0 ? '1er' : ($index + 1) + 'e' }} trim. :</b> {{ o }}@if (l.assiduite) { <span class="assid">{{ assid(l.assiduite[$index]) }}</span> }</p> }
                           }
                         </td>
                         <td [attr.rowspan]="nbMatieres(d) + 3"></td>
@@ -217,7 +223,7 @@ const TERMS_EN = ['FIRST TERM EXAMINATION', 'SECOND TERM EXAMINATION', 'THIRD TE
                   @for (p of periodes; track p) { <td>{{ note(d, l, p, 'composition', mat) }}</td><td class="sur">{{ max(mat, d) }}</td> }
                   @if (mi % 4 === 0 && mi / 4 < 3) {
                     <td class="obs-cell" [attr.rowspan]="mi / 4 === 2 ? matieres(d).length - 8 + 3 : 4">
-                      <b>{{ examens[mi / 4] }}</b><br>{{ l.observations[mi / 4] }}
+                      <b>{{ examens[mi / 4] }}</b><br>{{ l.observations[mi / 4] }}@if (l.assiduite) { <span class="assid">{{ assidAr(l.assiduite[mi / 4]) }}</span> }
                     </td>
                     <td [attr.rowspan]="mi / 4 === 2 ? matieres(d).length - 8 + 3 : 4"></td>
                   }
@@ -254,7 +260,7 @@ const TERMS_EN = ['FIRST TERM EXAMINATION', 'SECOND TERM EXAMINATION', 'THIRD TE
               <tr><th>SUBJECTS</th><th>GRADES</th><th>OUT OF</th><th>COMMENTS</th></tr>
               @for (mat of matieres(d); track mat.code; let first = $first) {
                 <tr><td>{{ mat.nom.toUpperCase() }}</td><td><b>{{ note(d, l, pi + 1, 'composition', mat) }}</b></td><td><b>{{ max(mat, d) }}</b></td>
-                  @if (first) { <td class="obs-cell" [attr.rowspan]="matieres(d).length + 3">{{ l.observations[pi] }}</td> }</tr>
+                  @if (first) { <td class="obs-cell" [attr.rowspan]="matieres(d).length + 3">{{ l.observations[pi] }}@if (l.assiduite) { <span class="assid">{{ assidEn(l.assiduite[pi]) }}</span> }</td> }</tr>
               }
               <tr><td><b>TOTAL GRADES</b></td><td><b>{{ nombre(r?.total) }}</b></td><td><b>{{ totalMax(d) }}</b></td></tr>
               <tr><td><b>AVERAGE</b></td><td><b>{{ nombre(r?.moyenne) }}</b></td><td><b>10</b></td></tr>
@@ -292,6 +298,11 @@ export class ImpressionComponent implements OnInit {
   periode = input<string>();
 
   private ns = inject(NotesService);
+  private abs = inject(AbsencesService);
+  /** Assiduité en abrégé pour les cases d'observation. */
+  assid(r?: ResumeAssiduite) { return r ? `Abs. ${r.absences} ½j${r.absencesJustifiees ? ` (${r.absencesJustifiees} just.)` : ''} · Ret. ${r.retards}` : ''; }
+  assidAr(r?: ResumeAssiduite) { return r ? `الغياب: ${r.absences} · التأخر: ${r.retards}` : ''; }
+  assidEn(r?: ResumeAssiduite) { return r ? `Absences: ${r.absences} half-days · Late: ${r.retards}` : ''; }
   periodes = PERIODES;
   decisions = DECISIONS;
   examens = EXAMENS_AR;
@@ -319,7 +330,7 @@ export class ImpressionComponent implements OnInit {
 
   async ngOnInit() {
     try {
-      this.donnees.set(await chargerBulletins(this.ns, Number(this.id()), this.bulletin()));
+      this.donnees.set(await chargerBulletins(this.ns, Number(this.id()), this.bulletin(), this.abs));
     } catch (e) {
       this.erreur.set((e as Error).message);
     }

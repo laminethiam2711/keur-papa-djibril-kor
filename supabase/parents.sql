@@ -39,6 +39,7 @@ declare
   v_echecs int;
   v_tarifs json := '[]'::json;
   v_paiements json := '[]'::json;
+  v_absences json := '[]'::json;
 begin
   if v_mat = '' or v_code = '' then
     raise exception 'Saisissez le matricule et le code.';
@@ -51,7 +52,7 @@ begin
     raise exception 'Trop d''essais. Réessayez dans 15 minutes ou contactez l''école.';
   end if;
 
-  select * into v_eleve from eleves where upper(matricule) = v_mat and code_parent = v_code limit 1;
+  select * into v_eleve from eleves where upper(matricule) = v_mat and code_parent = v_code order by id desc limit 1;
   if not found then
     insert into parent_tentatives (matricule, reussi) values (v_mat, false);
     raise exception 'Matricule ou code incorrect.';
@@ -67,6 +68,12 @@ begin
     select coalesce(json_agg(p order by p.date_paiement desc), '[]'::json) into v_paiements
       from (select eleve_id, classe_id, annee, type, mois, montant, moyen, reference, date_paiement, numero_recu
             from paiements where eleve_id = v_eleve.id and annee = v_classe.annee) p;
+  end if;
+
+  -- Absences et retards (si le module est installé)
+  if to_regclass('public.absences') is not null then
+    select coalesce(json_agg(a order by a.date desc), '[]'::json) into v_absences
+      from (select date, type, moment, justifie, motif from absences where eleve_id = v_eleve.id) a;
   end if;
 
   return json_build_object(
@@ -86,7 +93,8 @@ begin
                 'periode', periode, 'observation', observation, 'decision', decision)), '[]'::json)
               from appreciations where eleve_id = v_eleve.id),
     'tarifs', v_tarifs,
-    'paiements', v_paiements
+    'paiements', v_paiements,
+    'absences', v_absences
   );
 end;
 $$;

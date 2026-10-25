@@ -2,6 +2,8 @@
 import { BulletinCode, ModeleReleve, modelePour, PERIODES } from './modeles';
 import { indexer, NoteLigne, resultatsAnnuels, resultatsPeriode, ResultatPeriode, statsClasse, StatsClasse } from './calcul';
 import { Appreciation, Classe, Eleve, NotesService } from './notes.service';
+import { Absence, resumeParTrimestre, ResumeAssiduite } from '../absences/regles';
+import { AbsencesService } from '../absences/absences.service';
 
 export interface LigneBulletin {
   eleve: Eleve;
@@ -10,6 +12,7 @@ export interface LigneBulletin {
   annuel: { moyenne: number | null; rang: number | null; exAequo: boolean };
   observations: string[];                             // index 0 = 1er trimestre
   decision: string;
+  assiduite?: ResumeAssiduite[];                     // index 0-2 = trimestres, 3 = année (si le module Absences est installé)
 }
 
 export interface DonneesBulletin {
@@ -23,15 +26,16 @@ export interface DonneesBulletin {
   nbEleves: number;
 }
 
-export async function chargerBulletins(ns: NotesService, classeId: number, bulletin: BulletinCode): Promise<DonneesBulletin> {
-  const [classe, eleves, notes, apps] = await Promise.all([
+export async function chargerBulletins(ns: NotesService, classeId: number, bulletin: BulletinCode, abs?: AbsencesService): Promise<DonneesBulletin> {
+  const [classe, eleves, notes, apps, absences] = await Promise.all([
     ns.classe(classeId), ns.eleves(classeId), ns.notes(classeId, bulletin), ns.appreciations(classeId, bulletin),
+    abs ? abs.classeSiDisponible(classeId) : Promise.resolve(undefined),
   ]);
-  return construireBulletins(classe, eleves, notes, apps, bulletin);
+  return construireBulletins(classe, eleves, notes, apps, bulletin, absences);
 }
 
 /** Calcule tout le bulletin à partir des données brutes (sans accès à la base). */
-export function construireBulletins(classe: Classe, eleves: Eleve[], notes: NoteLigne[], apps: Appreciation[], bulletin: BulletinCode): DonneesBulletin {
+export function construireBulletins(classe: Classe, eleves: Eleve[], notes: NoteLigne[], apps: Appreciation[], bulletin: BulletinCode, absences?: Absence[]): DonneesBulletin {
   const modele = modelePour(classe, bulletin);
   const idx = indexer(notes);
   const ids = eleves as { id: number }[];
@@ -49,6 +53,7 @@ export function construireBulletins(classe: Classe, eleves: Eleve[], notes: Note
     annuel: annuel.get(e.id!)!,
     observations: PERIODES.map((p) => app.get(`${e.id}|${p}`)?.observation ?? ''),
     decision: app.get(`${e.id}|0`)?.decision ?? '',
+    assiduite: absences ? resumeParTrimestre(absences.filter((a) => a.eleve_id === e.id)) : undefined,
   }));
 
   return {

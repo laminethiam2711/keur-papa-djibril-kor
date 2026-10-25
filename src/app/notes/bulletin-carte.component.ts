@@ -4,6 +4,7 @@ import { libellePeriode, Matiere, maxMatiere } from './modeles';
 import { appreciation, baremeMoyenne, cle, formatRang, nombre } from './calcul';
 import { DonneesBulletin, LigneBulletin } from './donnees-bulletin';
 import { ECOLE } from '../data/ecole';
+import { texteAssiduite } from '../absences/regles';
 
 /**
  * Carte « bulletin de notes » d'un élève (affichage à l'écran et impression).
@@ -69,6 +70,9 @@ import { ECOLE } from '../data/ecole';
             </tbody>
           </table>
         </div>
+        @if (ligne().assiduite; as assi) {
+          <div class="assiduite"><span class="np-libelle">Assiduité du trimestre</span>{{ texteAssiduite(assi[p - 1]) }}</div>
+        }
         @if (ligne().observations[p - 1]) {
           <div class="observation"><span class="np-libelle">Observation du maître</span>{{ ligne().observations[p - 1] }}</div>
         }
@@ -100,6 +104,9 @@ import { ECOLE } from '../data/ecole';
             }
           </tbody>
         </table>
+        @if (ligne().assiduite; as assi) {
+          <div class="assiduite"><span class="np-libelle">Assiduité de l'année</span>{{ texteAssiduite(assi[3]) }}</div>
+        }
         <div class="np-resume">
           <div class="principal"><span class="np-libelle">Moyenne annuelle</span>
             <div class="np-grand">{{ nombre(ligne().annuel.moyenne) || '—' }} <small>/ {{ bareme() }}</small></div></div>
@@ -135,6 +142,7 @@ import { ECOLE } from '../data/ecole';
     .ar { font-family: 'Amiri', serif; font-size: .95rem; }
     .observation { display: flex; flex-direction: column; gap: 4px; padding: 14px 22px; border-top: 1px solid #eef0f4; font-style: italic; }
     .observation .np-libelle { font-style: normal; }
+    .assiduite { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; padding: 10px 22px; border-top: 1px solid #eef0f4; font-size: .9rem; }
     .moyen { font-size: 1.4rem; font-weight: 700; color: var(--bleu-nuit); line-height: 1.3; }
     .moyen small, .classe-stats small { font-size: .85rem; color: var(--texte-doux); font-weight: 500; }
     .classe-stats { font-weight: 700; color: var(--bleu-nuit); display: flex; flex-direction: column; margin-top: 4px; }
@@ -165,6 +173,7 @@ export class BulletinCarteComponent {
   libellePeriode = libellePeriode;
   nombre = nombre;
   formatRang = formatRang;
+  texteAssiduite = texteAssiduite;
   ecole = ECOLE;
   aujourdhui = new Date();
 

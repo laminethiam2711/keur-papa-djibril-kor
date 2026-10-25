@@ -10,6 +10,7 @@ import {
   fcfa, LIBELLE_TYPE, MOIS_SCOLAIRES, Paiement, moisEchus, nomMois, nomMoisCourt, situation, tarif, TypeFrais, typesDeLEleve, verse,
 } from '../paiements/regles';
 import { ParentsService } from './parents.service';
+import { Absence, libelleMoment, resumeParTrimestre } from '../absences/regles';
 
 @Component({
   selector: 'app-espace-parents',
@@ -59,6 +60,7 @@ import { ParentsService } from './parents.service';
 
           <div class="np-segment no-print">
             <button [class.actif]="vue() === 'notes'" (click)="vue.set('notes')">📘 Notes et bulletin</button>
+            @if (absencesEnfant()) { <button [class.actif]="vue() === 'absences'" (click)="vue.set('absences')">📋 Absences</button> }
             @if (avecPaiements()) { <button [class.actif]="vue() === 'paiements'" (click)="vue.set('paiements')">💳 Paiements</button> }
           </div>
 
@@ -82,6 +84,37 @@ import { ParentsService } from './parents.service';
                 </div>
               }
             }
+          }
+
+          @if (vue() === 'absences' && absencesEnfant(); as liste) {
+            @let r = resumeAbs();
+            <div class="np-carte">
+              <div class="np-resume sans-bord">
+                @for (t of [0, 1, 2]; track t) {
+                  <div><span class="np-libelle">{{ t === 0 ? '1er' : (t + 1) + 'e' }} trimestre</span>
+                    <div class="abs-chiffres"><b>{{ r[t].absences }}</b> ½ j. d'absence <small>· {{ r[t].retards }} retard(s)</small></div></div>
+                }
+                <div class="principal"><span class="np-libelle">Année</span>
+                  <div class="abs-chiffres"><b>{{ r[3].absences }}</b> ½ j. <small>({{ r[3].absencesJustifiees }} justifiées) · {{ r[3].retards }} retard(s)</small></div></div>
+              </div>
+              <table class="np-table">
+                <thead><tr><th>Date</th><th>Type</th><th>Moment</th><th>Justifiée</th><th>Motif</th></tr></thead>
+                <tbody>
+                  @for (a of liste; track $index) {
+                    <tr>
+                      <td>{{ a.date | date: 'EEE d MMM y' }}</td>
+                      <td><span class="np-pill" [class.np-i]="a.type === 'absence'" [class.np-p]="a.type === 'retard'">{{ a.type === 'absence' ? 'Absence' : 'Retard' }}</span></td>
+                      <td>{{ libelleMoment(a.moment) }}</td>
+                      <td>{{ a.justifie ? 'Oui' : 'Non' }}</td>
+                      <td>{{ a.motif || '—' }}</td>
+                    </tr>
+                  } @empty {
+                    <tr><td colspan="5">Aucune absence ni retard cette année. Bravo ! 👏</td></tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            <p class="np-note-bas">Une absence non justifiée ? Contactez l'école pour la justifier.</p>
           }
 
           @if (vue() === 'paiements') {
@@ -140,6 +173,7 @@ import { ParentsService } from './parents.service';
     }
   `,
   styles: `
+    .abs-chiffres { color: var(--bleu-nuit); margin-top: 4px; } .abs-chiffres b { font-size: 1.4rem; } .abs-chiffres small { color: var(--texte-doux); }
     .connexion { max-width: 440px; margin: 0 auto; text-align: center; }
     .connexion img { display: block; margin: 0 auto 8px; }
     .connexion .champ { text-align: left; }
@@ -186,7 +220,10 @@ export class EspaceParentsComponent implements OnInit {
   souvenir = true;
   envoi = signal(false);
   erreur = signal('');
-  vue = signal<'notes' | 'paiements'>('notes');
+  vue = signal<'notes' | 'absences' | 'paiements'>('notes');
+  libelleMoment = libelleMoment;
+  absencesEnfant = computed(() => this.ps.donnees()?.absences ?? null);
+  resumeAbs = computed(() => resumeParTrimestre((this.absencesEnfant() ?? []) as Absence[]));
   bulletin = signal<BulletinCode>('fr');
   onglet = signal<number | 'annee'>(1);
 
@@ -203,7 +240,8 @@ export class EspaceParentsComponent implements OnInit {
     const eleves: Eleve[] = d.camarades.map((id) => id === d.eleve.id ? d.eleve
       : { id, classe_id: d.classe.id!, prenom: '', nom: '', date_naissance: null, lieu_naissance: '', matricule: '', telephone: '' });
     const donnees = construireBulletins(d.classe, eleves, d.notes.filter((n) => n.bulletin === b),
-      d.appreciations.filter((a) => a.bulletin === b), b);
+      d.appreciations.filter((a) => a.bulletin === b), b,
+      d.absences ? d.absences.map((a) => ({ ...a, eleve_id: d.eleve.id!, classe_id: d.classe.id! })) : undefined);
     return { d: donnees, ligne: donnees.lignes.find((l) => l.eleve.id === d.eleve.id) ?? null };
   });
 

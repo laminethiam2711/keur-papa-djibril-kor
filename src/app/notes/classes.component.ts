@@ -82,6 +82,7 @@ const VIDE = (): Classe => ({
             <a class="btn btn-contour-bleu petit" [routerLink]="['/admin/classes', c.id]">Élèves</a>
             <a class="btn btn-vert petit" [routerLink]="['/admin/saisie', c.id]">Saisir les notes</a>
             <a class="btn btn-or petit" [routerLink]="['/admin/bulletins', c.id]">Bulletins</a>
+            <a class="btn btn-contour-bleu petit" [routerLink]="['/admin/appel', c.id]">Appel</a>
             <button class="lien" (click)="modifier(c)">Modifier</button>
           </div>
         </article>
