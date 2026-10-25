@@ -40,10 +40,10 @@ import { ECOLE } from '../data/ecole';
     .barre-info-int { display: flex; justify-content: space-between; padding: 6px 16px; gap: 12px; }
     .barre-info a { color: var(--or); text-decoration: none; font-weight: 600; }
     header { background: #fff; border-bottom: 1px solid var(--bordure); position: sticky; top: 0; z-index: 50; }
-    .entete { display: flex; align-items: center; justify-content: space-between; height: 76px; }
-    .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .entete { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 76px; max-width: 1320px; }
+    .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; flex-shrink: 0; }
     .embleme { width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0; }
-    .logo-texte { display: flex; flex-direction: column; line-height: 1.2; }
+    .logo-texte { display: flex; flex-direction: column; line-height: 1.2; white-space: nowrap; }
     .logo-texte strong { color: var(--bleu-nuit); font-size: 1.05rem; }
     .logo-texte small { color: var(--vert); font-weight: 500; }
     nav { display: flex; align-items: center; gap: 2px; }
