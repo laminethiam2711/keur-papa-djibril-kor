@@ -210,3 +210,25 @@ h3 { font-size: 1.2rem; }
 .np-btn.or { background: var(--or); color: var(--bleu-nuit); border-color: var(--or); }
 .np-btn[disabled] { opacity: .5; cursor: not-allowed; }
 .np-erreur { background: #fdecea; color: #a12a1f; padding: 12px 16px; border-radius: 10px; margin: 0; }
+
+/* ===== Impression du bulletin à l'écran : seulement la carte du bulletin ===== */
+@media print {
+  @page { size: A4 portrait; margin: 8mm; }
+  body:has(.bulletin-imprimable) { background: #fff !important; }
+  body:has(.bulletin-imprimable) app-admin-layout header,
+  body:has(.bulletin-imprimable) .no-print { display: none !important; }
+  body:has(.bulletin-imprimable) app-admin-layout .admin { background: #fff !important; min-height: 0 !important; }
+  body:has(.bulletin-imprimable) app-admin-layout main { padding: 0 !important; max-width: none !important; }
+  .bulletin-imprimable { box-shadow: none !important; border: 1px solid #c9cfda !important; zoom: .8; }
+  .bulletin-imprimable .np-resume { grid-template-columns: repeat(5, 1fr); }
+  .bulletin-imprimable * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .bulletin-imprimable .np-bandeau { padding: 12px 18px; }
+  .bulletin-imprimable .np-infos > div { padding: 8px 14px; }
+  .bulletin-imprimable .np-table th { padding: 6px 10px; }
+  .bulletin-imprimable .np-table td { padding: 3px 10px; }
+  .bulletin-imprimable .np-resume > div { padding: 8px 14px; }
+  .bulletin-imprimable .np-grand { font-size: 1.5rem; }
+  .bulletin-imprimable .signatures { padding: 10px 18px 14px; }
+  .bulletin-imprimable .case { min-height: 95px; }
+  .bulletin-imprimable .np-note-bas { padding: 6px 18px; }
+}

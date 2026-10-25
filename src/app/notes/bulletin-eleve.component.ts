@@ -5,6 +5,7 @@ import { BulletinCode, LIBELLES_BULLETIN, libellePeriode, Matiere, maxMatiere, P
 import { appreciation, baremeMoyenne, cle, formatRang, nombre } from './calcul';
 import { chargerBulletins, DonneesBulletin } from './donnees-bulletin';
 import { Classe, NotesService } from './notes.service';
+import { ECOLE } from '../data/ecole';
 
 /** Bulletin d'un élève à l'écran (consultation). L'impression garde les modèles papier de l'école. */
 @Component({
@@ -12,9 +13,9 @@ import { Classe, NotesService } from './notes.service';
   imports: [RouterLink, DatePipe],
   template: `
     <div class="np-page">
-      <a [routerLink]="['/admin/classes', classe()]" class="np-fil">‹ Élèves</a>
+      <a [routerLink]="['/admin/classes', classe()]" class="np-fil no-print">‹ Élèves</a>
 
-      <div class="np-titre">
+      <div class="np-titre no-print">
         <h1>Bulletin de notes</h1>
         <div class="np-segment">
           @for (p of periodes; track p) {
@@ -30,7 +31,7 @@ import { Classe, NotesService } from './notes.service';
 
       @if (donnees(); as d) {
         @if (ligne(); as l) {
-          <div class="outils">
+          <div class="outils no-print">
             @if (relevesDispo(d.classe).length > 1) {
               <div class="np-segment">
                 @for (b of relevesDispo(d.classe); track b) {
@@ -42,11 +43,11 @@ import { Classe, NotesService } from './notes.service';
               <button class="np-btn" (click)="voisin(-1)" [disabled]="position() <= 0">‹ Élève précédent</button>
               <button class="np-btn" (click)="voisin(1)" [disabled]="position() >= d.lignes.length - 1">Élève suivant ›</button>
               <a class="np-btn vert" [routerLink]="['/admin/saisie', classe()]">Saisir les notes</a>
-              <a class="np-btn or" target="_blank" [href]="lienImpression()">🖨 Imprimer</a>
+              <a class="np-btn or" target="_blank" [href]="lienImpression()" title="Format des relevés papier de l'école">🖨 Modèle papier</a>
             </div>
           </div>
 
-          <div class="np-carte">
+          <div class="np-carte bulletin-imprimable">
             <div class="np-bandeau">
               <div>
                 <h2>École franco-arabe Keur Papa Djibril Kor</h2>
@@ -141,7 +142,20 @@ import { Classe, NotesService } from './notes.service';
                   <div class="pastille-bas">@if (l.decision) { <span class="np-pill" [class]="'np-pill ' + classeDecision(l.decision)">{{ l.decision }}</span> } @else { <span class="doux">À décider</span> }</div></div>
               </div>
             }
+            <!-- Zones de signature -->
+            <div class="signatures">
+              <p class="fait-a">Fait à {{ ecole.ville }}, le {{ aujourdhui | date: 'd MMMM y' }}</p>
+              <div class="cases">
+                <div class="case"><span class="np-libelle">Le (la) maître(sse)</span><span class="nom-sign">{{ d.classe.maitre }}</span></div>
+                <div class="case direction"><span class="np-libelle">{{ ecole.signatureDirection }}</span><span class="cachet">Cachet et signature</span></div>
+                <div class="case"><span class="np-libelle">Le parent</span><span class="nom-sign">Vu et pris connaissance</span></div>
+              </div>
+            </div>
             <p class="np-note-bas">{{ regle() }}</p>
+          </div>
+          <div class="bas no-print">
+            <button class="np-btn plein grand-btn" (click)="imprimer()">🖨 Imprimer ce bulletin</button>
+            <span>Imprime uniquement le bulletin de {{ l.eleve.prenom }} {{ l.eleve.nom }}, tel qu'affiché. Choisissez « Enregistrer en PDF » pour obtenir un fichier.</span>
           </div>
         } @else {
           <p class="np-erreur">Élève introuvable dans cette classe.</p>
@@ -166,6 +180,19 @@ import { Classe, NotesService } from './notes.service';
     .classe-stats { font-weight: 700; color: var(--bleu-nuit); display: flex; flex-direction: column; margin-top: 4px; }
     .pastille-bas { margin-top: 8px; }
     .obs { color: var(--texte-doux); font-size: .88rem; }
+    .signatures { padding: 18px 22px 22px; border-top: 1px solid #e3e6ec; }
+    .fait-a { margin: 0 0 12px; text-align: right; font-size: .88rem; color: var(--texte-doux); }
+    .cases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .case { border: 1px dashed #c9cfda; border-radius: 12px; min-height: 120px; padding: 12px 14px;
+      display: flex; flex-direction: column; justify-content: space-between; }
+    .case.direction { border: 1.5px solid var(--bleu-nuit); background: #fbfcfe; }
+    .nom-sign { font-size: .85rem; color: var(--texte-doux); }
+    .cachet { align-self: center; font-size: .75rem; color: #b0b6c3; border: 1px dashed #d5dae3; border-radius: 50%;
+      width: 76px; height: 76px; display: grid; place-items: center; text-align: center; line-height: 1.2; }
+    .bas { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; justify-content: center; text-align: center; }
+    .bas span { color: var(--texte-doux); font-size: .88rem; max-width: 520px; }
+    .grand-btn { padding: 14px 28px; font-size: 1rem; }
+    @media (max-width: 640px) { .cases { grid-template-columns: 1fr; } }
   `,
 })
 export class BulletinEleveComponent implements OnInit {
@@ -229,6 +256,18 @@ export class BulletinEleveComponent implements OnInit {
     if (dec.startsWith('Passe')) return 'np-tb';
     if (dec.startsWith('Exclu') || dec.startsWith('Redouble')) return 'np-i';
     return 'np-p';
+  }
+
+  ecole = ECOLE;
+  aujourdhui = new Date();
+
+  /** Imprime seulement ce bulletin (le menu et les boutons sont masqués à l'impression). */
+  imprimer() {
+    const ancien = document.title;
+    const l = this.ligne();
+    if (l) document.title = `Bulletin ${l.eleve.prenom} ${l.eleve.nom}`;
+    window.print();
+    document.title = ancien;
   }
 
   lienImpression() {

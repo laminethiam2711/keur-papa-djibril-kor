@@ -11,6 +11,9 @@ export const ECOLE = {
   // Numéro WhatsApp au format international, sans espace ni « + »
   whatsapp: '221772307905',
   horaires: 'Lundi – Vendredi : 8h00 – 17h00 · Samedi : 8h00 – 13h00',
+  // Qui signe les bulletins : mettre 'Le Directeur' si c'est un homme
+  signatureDirection: 'La Directrice',
+  ville: 'Dakar',
 };
 
 export interface Etablissement {
