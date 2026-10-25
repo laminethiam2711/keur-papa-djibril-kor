@@ -44,7 +44,9 @@ import { Classe, Eleve, NotesService } from './notes.service';
               <label class="ch"><span>Nom *</span><input name="nom" [(ngModel)]="form.nom" required placeholder="Diop"></label>
               <label class="ch"><span>Né(e) le</span><input name="dn" type="date" [(ngModel)]="form.date_naissance"></label>
               <label class="ch"><span>à</span><input name="ln" [(ngModel)]="form.lieu_naissance" placeholder="Pikine"></label>
-              <label class="ch petit"><span>Matricule</span><input name="mat" [(ngModel)]="form.matricule"></label>
+              <label class="ch petit"><span>Matricule</span>
+                <input name="mat" class="auto" [value]="form.id ? form.matricule : (prochain() || 'Automatique')" readonly
+                  title="Le matricule est attribué automatiquement"></label>
               <label class="ch"><span>Téléphone parent</span><input name="tel" type="tel" [(ngModel)]="form.telephone" placeholder="77 000 00 00"></label>
               <div class="ch boutons">
                 <button class="np-btn plein" [disabled]="f.invalid || envoi()">{{ form.id ? 'Enregistrer' : '+ Inscrire' }}</button>
@@ -62,6 +64,12 @@ import { Classe, Eleve, NotesService } from './notes.service';
 
           <!-- ===== Liste des élèves ===== -->
           <div class="np-carte">
+            @if (sansMatricule()) {
+              <div class="alerte-mat">
+                {{ sansMatricule() }} élève{{ sansMatricule() > 1 ? 's n’ont' : ' n’a' }} pas encore de matricule.
+                <button class="np-btn" (click)="completer()" [disabled]="envoi()">Attribuer automatiquement</button>
+              </div>
+            }
             <div class="liste-tete">
               <input class="recherche" type="search" placeholder="Rechercher un élève…" [ngModel]="recherche()" (ngModelChange)="recherche.set($event)">
               <span>{{ elevesFiltres().length }} élève{{ elevesFiltres().length > 1 ? 's' : '' }}</span>
@@ -138,6 +146,9 @@ import { Classe, Eleve, NotesService } from './notes.service';
     .ch span { font-size: .72rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #6b7387; }
     .ch input { font: inherit; font-size: .92rem; padding: 10px 12px; border: 1px solid #d5dae3; border-radius: 10px; background: #fff; }
     .ch input:focus { outline: 2px solid var(--bleu-nuit); border-color: transparent; }
+    .ch input.auto { background: #f3f5f8; color: var(--bleu-nuit); font-weight: 600; cursor: default; }
+    .alerte-mat { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+      background: #fff8e6; color: #8a5a00; padding: 10px 18px; border-bottom: 1px solid #f3e2b8; font-size: .9rem; }
     .ch.boutons { flex: 0 0 auto; flex-direction: row; min-width: 0; }
     .ch.boutons .np-btn { padding: 11px 18px; }
     .import { margin-top: 16px; padding-top: 16px; border-top: 1px dashed #d5dae3; }
@@ -184,6 +195,10 @@ export class ClasseDetailComponent implements OnInit {
   listeImport = '';
   private maximums: Record<string, number> = {};
 
+  /** Matricule que recevra le prochain élève inscrit (affiché dans le formulaire). */
+  prochain = signal('');
+  sansMatricule = computed(() => this.eleves().filter((e) => !e.matricule?.trim()).length);
+
   elevesFiltres = computed(() => {
     const q = this.recherche().trim().toLowerCase();
     return q ? this.eleves().filter((e) => `${e.prenom} ${e.nom} ${e.matricule}`.toLowerCase().includes(q)) : this.eleves();
@@ -205,7 +220,23 @@ export class ClasseDetailComponent implements OnInit {
     this.form = { classe_id: Number(this.id()), prenom: '', nom: '', date_naissance: null, lieu_naissance: '', matricule: '', telephone: '' };
   }
 
-  async chargerEleves() { this.eleves.set(await this.ns.eleves(Number(this.id()))); }
+  async chargerEleves() {
+    this.eleves.set(await this.ns.eleves(Number(this.id())));
+    const c = this.classe();
+    if (c) this.prochain.set((await this.ns.matricules(c.annee, 1))[0]);
+  }
+
+  async completer() {
+    this.envoi.set(true);
+    try {
+      await this.ns.completerMatricules(Number(this.id()), this.classe()!.annee);
+      await this.chargerEleves();
+    } catch (e) {
+      this.erreur.set((e as Error).message);
+    } finally {
+      this.envoi.set(false);
+    }
+  }
 
   initiales(e: Eleve) { return ((e.prenom[0] ?? '') + (e.nom[0] ?? '')).toUpperCase(); }
   couleur(e: Eleve) {
@@ -247,7 +278,7 @@ export class ClasseDetailComponent implements OnInit {
       await this.ns.enregistrerEleve({
         ...this.form, prenom: this.form.prenom.trim(), nom: this.form.nom.trim(),
         date_naissance: this.form.date_naissance || null,
-      });
+      }, this.classe()!.annee);
       this.reset();
       await this.chargerEleves();
     } catch (e) {
@@ -267,7 +298,7 @@ export class ClasseDetailComponent implements OnInit {
     });
     this.erreur.set('');
     try {
-      await this.ns.ajouterEleves(liste);
+      await this.ns.ajouterEleves(liste, this.classe()!.annee);
       this.listeImport = '';
       this.importOuvert.set(false);
       await this.chargerEleves();

@@ -89,12 +89,42 @@ export class NotesService {
     const lignes = await this.toutLire<{ classe_id: number }>((de, a) => this.db.from('eleves').select('classe_id').range(de, a));
     return lignes.reduce((acc, l) => ({ ...acc, [l.classe_id]: (acc[l.classe_id] ?? 0) + 1 }), {} as Record<number, number>);
   }
-  async enregistrerEleve(e: Eleve) {
+  async enregistrerEleve(e: Eleve, annee: string) {
     const { id, ...v } = e;
-    this.ok(id ? await this.db.from('eleves').update(v).eq('id', id) : await this.db.from('eleves').insert(v));
+    if (id) {
+      this.ok(await this.db.from('eleves').update(v).eq('id', id));
+      return;
+    }
+    // Nouvel élève : matricule attribué automatiquement
+    const [matricule] = await this.matricules(annee, 1);
+    this.ok(await this.db.from('eleves').insert({ ...v, matricule }));
   }
-  async ajouterEleves(liste: Omit<Eleve, 'id'>[]) {
-    this.ok(await this.db.from('eleves').insert(liste));
+  async ajouterEleves(liste: Omit<Eleve, 'id'>[], annee: string) {
+    const numeros = await this.matricules(annee, liste.length);
+    this.ok(await this.db.from('eleves').insert(liste.map((e, i) => ({ ...e, matricule: numeros[i] }))));
+  }
+  /** Donne un matricule aux élèves de la classe qui n'en ont pas encore. */
+  async completerMatricules(classeId: number, annee: string): Promise<number> {
+    const sans = (await this.eleves(classeId)).filter((e) => !e.matricule?.trim());
+    if (!sans.length) return 0;
+    const numeros = await this.matricules(annee, sans.length);
+    for (const [i, e] of sans.entries()) this.ok(await this.db.from('eleves').update({ matricule: numeros[i] }).eq('id', e.id!));
+    return sans.length;
+  }
+
+  // ---------- Matricules automatiques : KPDK-2026-0001, KPDK-2026-0002… ----------
+  /** Préfixe selon l'année de rentrée de la classe (« 2026-2027 » → KPDK-2026-). */
+  prefixeMatricule(annee: string) {
+    const an = annee.match(/\d{4}/)?.[0] ?? String(new Date().getFullYear());
+    return `KPDK-${an}-`;
+  }
+  /** Les `n` prochains matricules libres (toutes classes confondues pour cette année). */
+  async matricules(annee: string, n: number): Promise<string[]> {
+    const prefixe = this.prefixeMatricule(annee);
+    const existants = await this.toutLire<{ matricule: string }>((de, a) =>
+      this.db.from('eleves').select('matricule').like('matricule', `${prefixe}%`).range(de, a));
+    const max = existants.reduce((m, e) => Math.max(m, Number(e.matricule.slice(prefixe.length)) || 0), 0);
+    return Array.from({ length: n }, (_, i) => prefixe + String(max + 1 + i).padStart(4, '0'));
   }
   async supprimerEleve(id: number) {
     this.ok(await this.db.from('eleves').delete().eq('id', id));
