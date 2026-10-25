@@ -11,10 +11,12 @@ import {
 } from '../paiements/regles';
 import { ParentsService } from './parents.service';
 import { Absence, libelleMoment, resumeParTrimestre } from '../absences/regles';
+import { CalendrierService, Evenement, jourIso } from '../calendrier/calendrier.service';
+import { ListeEvenementsComponent } from '../calendrier/calendrier.component';
 
 @Component({
   selector: 'app-espace-parents',
-  imports: [FormsModule, DatePipe, BulletinCarteComponent],
+  imports: [ListeEvenementsComponent, FormsModule, DatePipe, BulletinCarteComponent],
   template: `
     @if (!ps.donnees()) {
       <section class="bandeau-page no-print">
@@ -60,6 +62,7 @@ import { Absence, libelleMoment, resumeParTrimestre } from '../absences/regles';
 
           <div class="np-segment no-print">
             <button [class.actif]="vue() === 'notes'" (click)="vue.set('notes')">📘 Notes et bulletin</button>
+            @if (evenements().length) { <button [class.actif]="vue() === 'calendrier'" (click)="vue.set('calendrier')">📅 Calendrier</button> }
             @if (absencesEnfant()) { <button [class.actif]="vue() === 'absences'" (click)="vue.set('absences')">📋 Absences</button> }
             @if (avecPaiements()) { <button [class.actif]="vue() === 'paiements'" (click)="vue.set('paiements')">💳 Paiements</button> }
           </div>
@@ -84,6 +87,10 @@ import { Absence, libelleMoment, resumeParTrimestre } from '../absences/regles';
                 </div>
               }
             }
+          }
+
+          @if (vue() === 'calendrier') {
+            <app-liste-evenements [evenements]="evenements()" />
           }
 
           @if (vue() === 'absences' && absencesEnfant(); as liste) {
@@ -220,7 +227,15 @@ export class EspaceParentsComponent implements OnInit {
   souvenir = true;
   envoi = signal(false);
   erreur = signal('');
-  vue = signal<'notes' | 'absences' | 'paiements'>('notes');
+  vue = signal<'notes' | 'absences' | 'calendrier' | 'paiements'>('notes');
+  private cal = inject(CalendrierService);
+  private tousEvts = signal<Evenement[]>([]);
+  /** Événements à venir concernant l'établissement de l'enfant. */
+  evenements = computed(() => {
+    const etab = this.ps.donnees()?.classe.etablissement;
+    const auj = jourIso();
+    return this.tousEvts().filter((e) => e.public && (e.date_fin ?? e.date_debut) >= auj && (e.etablissement === 'Tous' || e.etablissement === etab));
+  });
   libelleMoment = libelleMoment;
   absencesEnfant = computed(() => this.ps.donnees()?.absences ?? null);
   resumeAbs = computed(() => resumeParTrimestre((this.absencesEnfant() ?? []) as Absence[]));
@@ -266,6 +281,7 @@ export class EspaceParentsComponent implements OnInit {
   });
 
   async ngOnInit() {
+    this.cal.listerPublic().then((l) => this.tousEvts.set(l));
     if (!this.ps.donnees()) await this.ps.reprendre();
   }
 

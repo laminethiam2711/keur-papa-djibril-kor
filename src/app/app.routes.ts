@@ -30,6 +30,7 @@ export const routes: Routes = [
   { path: 'inscriptions', component: InscriptionsComponent, title: 'Inscriptions' + suffixe },
   { path: 'actualites', component: ActualitesComponent, title: 'Actualités' + suffixe },
   { path: 'contact', component: ContactComponent, title: 'Contact' + suffixe },
+  { path: 'calendrier', loadComponent: () => import('./calendrier/calendrier.component').then((m) => m.CalendrierComponent), title: 'Calendrier scolaire' + suffixe },
   { path: 'parents', loadComponent: () => import('./parents/espace-parents.component').then((m) => m.EspaceParentsComponent), title: 'Espace parents' + suffixe },
   {
     // Fiches « code parent » à découper (une par élève)
@@ -79,6 +80,7 @@ export const routes: Routes = [
       { path: 'saisie/:id', loadComponent: () => import('./notes/saisie.component').then((m) => m.SaisieComponent), title: 'Saisie des notes — Administration' },
       { path: 'eleve/:classe/:eleve', loadComponent: () => import('./notes/bulletin-eleve.component').then((m) => m.BulletinEleveComponent), title: 'Bulletin de l’élève — Administration' },
       { path: 'appel/:id', loadComponent: () => import('./absences/appel.component').then((m) => m.AppelComponent), title: 'Absences et retards — Administration' },
+      { path: 'calendrier', loadComponent: () => import('./calendrier/calendrier-admin.component').then((m) => m.CalendrierAdminComponent), title: 'Calendrier — Administration' },
       // ----- Paiements de la scolarité -----
       { path: 'paiements', loadComponent: () => import('./paiements/paiements.component').then((m) => m.PaiementsComponent), title: 'Paiements — Administration' },
       { path: 'paiements/eleve/:id', loadComponent: () => import('./paiements/paiement-eleve.component').then((m) => m.PaiementEleveComponent), title: 'Paiements de l’élève — Administration' },

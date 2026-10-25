@@ -124,3 +124,9 @@ Les données sont stockées dans **Supabase** (base PostgreSQL + connexion + sto
 
 - Classe → **🪪 Badges** : un badge par élève au format porte-badge B3 (95 × 124 mm, vertical), 4 par page A4.
 - Nom, prénom, section, année, matricule, QR code (= matricule), lieu et téléphones selon l'établissement. Case « PHOTO » pour coller la photo.
+
+## Calendrier scolaire
+
+- Exécuter `supabase/calendrier.sql` une fois.
+- Administration → **Calendrier** : ajouter rentrée, vacances, compositions, réunions, fêtes (par établissement ou pour tous).
+- Page publique **/calendrier** (lien dans Vie scolaire et en bas du site) et onglet « Calendrier » dans l'espace parents.

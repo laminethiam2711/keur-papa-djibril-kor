@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-vie-scolaire',
+  imports: [RouterLink],
   template: `
     <section class="bandeau-page">
       <div class="conteneur">
@@ -13,6 +15,7 @@ import { Component } from '@angular/core';
 
     <section class="section">
       <div class="conteneur">
+        <a class="lien-cal" routerLink="/calendrier">📅 <span><b>Calendrier scolaire</b><small>Rentrée, vacances, compositions et réunions des parents</small></span> <i>›</i></a>
         <div class="titre-section"><h2>Nos activités</h2></div>
         <div class="grille grille-3">
           @for (a of activites; track a.titre) {
@@ -41,6 +44,10 @@ import { Component } from '@angular/core';
     </section>
   `,
   styles: `
+    .lien-cal { display: flex; align-items: center; gap: 14px; background: var(--bleu-nuit); color: #fff; text-decoration: none; border-radius: 16px; padding: 16px 22px; margin-bottom: 36px; font-size: 1.6rem; }
+    .lien-cal span { display: flex; flex-direction: column; font-size: 1rem; }
+    .lien-cal small { color: #c9d1e3; font-size: .88rem; }
+    .lien-cal i { margin-left: auto; font-style: normal; color: var(--or); }
     .titre { margin-top: 12px; }
     .journee { list-style: none; padding: 0; margin: 0 auto; max-width: 640px; }
     .journee li { display: flex; gap: 20px; background: #fff; border: 1px solid var(--bordure); border-radius: 12px;

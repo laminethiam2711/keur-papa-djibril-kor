@@ -30,6 +30,7 @@ import { ECOLE, ETABLISSEMENTS } from '../data/ecole';
         <div>
           <h4>Liens rapides</h4>
           <p><a routerLink="/parents">Espace parents</a></p>
+          <p><a routerLink="/calendrier">Calendrier scolaire</a></p>
           <p><a routerLink="/inscriptions">Inscriptions</a></p>
           <p><a routerLink="/niveaux">Niveaux et cycles</a></p>
           <p><a routerLink="/actualites">Actualités</a></p>
