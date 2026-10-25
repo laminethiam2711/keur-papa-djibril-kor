@@ -9,6 +9,7 @@ import { ECOLE, ETABLISSEMENTS } from '../data/ecole';
     <footer>
       <div class="conteneur grille-pied">
         <div>
+          <img class="logo-pied" src="logo-256.png" alt="Logo de l’école Keur Papa Djibril Kor" width="88" height="88">
           <h3>Keur Papa Djibril Kor</h3>
           <p class="arabe">{{ ecole.nomArabe }}</p>
           <p>École privée franco-arabe. {{ ecole.slogan }}.</p>
@@ -43,6 +44,7 @@ import { ECOLE, ETABLISSEMENTS } from '../data/ecole';
     footer { background: var(--bleu-nuit); color: #c9d1e3; padding-top: 56px; margin-top: 0; }
     .grille-pied { display: grid; gap: 32px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
     h3 { color: #fff; margin-bottom: 4px; }
+    .logo-pied { width: 88px; height: 88px; border-radius: 50%; background: #fff; margin-bottom: 12px; }
     h4 { color: var(--or); margin: 0 0 12px; font-size: 1rem; }
     p { margin: 0 0 10px; font-size: .92rem; }
     .arabe { font-size: 1.3rem; text-align: left; }

@@ -9,7 +9,7 @@ import { SupabaseService } from '../services/supabase.service';
   template: `
     <div class="fond motif">
       <form class="carte boite" (ngSubmit)="connecter()" #f="ngForm">
-        <div class="embleme">KPDK</div>
+        <img class="embleme" src="logo-256.png" alt="Logo de l’école" width="96" height="96">
         <h1>Espace administrateur</h1>
         <p class="sous">École franco-arabe Keur Papa Djibril Kor</p>
 
@@ -30,8 +30,7 @@ import { SupabaseService } from '../services/supabase.service';
   styles: `
     .fond { min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; background-color: var(--sable); }
     .boite { width: 100%; max-width: 400px; text-align: center; }
-    .embleme { width: 64px; height: 64px; margin: 0 auto 16px; border-radius: 16px; background: var(--bleu-nuit);
-      color: var(--or); border: 2px solid var(--or); display: grid; place-items: center; font-weight: 700; }
+    .embleme { width: 96px; height: 96px; margin: 0 auto 16px; display: block; }
     h1 { font-size: 1.5rem; margin-bottom: 4px; }
     .sous { color: var(--texte-doux); margin: 0 0 24px; font-size: .9rem; }
     .champ { text-align: left; }

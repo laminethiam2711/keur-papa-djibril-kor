@@ -72,11 +72,8 @@
 .drapeau .v { background: #00853f; }
 .drapeau .j { background: #fdef42; color: #00853f; font-size: 9pt; }
 .drapeau .r { background: #e31b23; }
-.embleme {
-  width: 16mm; height: 16mm; flex-shrink: 0; border-radius: 3mm; border: 2px solid var(--or);
-  background: var(--bleu-nuit); color: var(--or); display: grid; place-items: center;
-  font-family: Arial, sans-serif; font-weight: 700; font-size: 8pt;
-}
+.embleme { width: 22mm; height: 22mm; flex-shrink: 0; }
+.logo-couverture { width: 34mm; height: 34mm; margin: 2mm auto 0; display: block; }
 .ecole-titre { font-family: Calibri, Arial, sans-serif; font-size: 20pt; margin: 5mm 0 1mm; color: #000; }
 .ecole-nom {
   font-family: Georgia, serif; font-size: 22pt; margin: 0; color: var(--bleu-nuit);
@@ -120,7 +117,8 @@
 .sur { color: #555; font-size: 8.5pt; }
 
 /* ---- Anglais ---- */
-.en { font-family: 'Times New Roman', serif; font-size: 13pt; }
+.en { font-family: 'Times New Roman', serif; font-size: 13pt; position: relative; }
+.logo-en { position: absolute; top: 16mm; right: 20mm; width: 32mm; height: 32mm; }
 .en-ligne { margin: 0 0 4mm; font-size: 13pt; }
 .en-ligne.grand b { font-size: 14pt; }
 .en-ligne span { font-size: 11.5pt; }

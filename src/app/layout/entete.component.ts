@@ -15,7 +15,7 @@ import { ECOLE } from '../data/ecole';
     <header>
       <div class="conteneur entete">
         <a routerLink="/" class="logo" (click)="fermer()">
-          <span class="embleme" aria-hidden="true">KPDK</span>
+          <img class="embleme" src="logo-256.png" alt="" width="52" height="52">
           <span class="logo-texte">
             <strong>Keur Papa Djibril Kor</strong>
             <small>École privée franco-arabe</small>
@@ -42,15 +42,12 @@ import { ECOLE } from '../data/ecole';
     header { background: #fff; border-bottom: 1px solid var(--bordure); position: sticky; top: 0; z-index: 50; }
     .entete { display: flex; align-items: center; justify-content: space-between; height: 76px; }
     .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-    .embleme {
-      width: 48px; height: 48px; border-radius: 12px; background: var(--bleu-nuit); color: var(--or);
-      display: grid; place-items: center; font-weight: 700; font-size: .8rem; letter-spacing: .5px;
-      border: 2px solid var(--or);
-    }
+    .embleme { width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0; }
     .logo-texte { display: flex; flex-direction: column; line-height: 1.2; }
     .logo-texte strong { color: var(--bleu-nuit); font-size: 1.05rem; }
     .logo-texte small { color: var(--vert); font-weight: 500; }
-    nav { display: flex; align-items: center; gap: 4px; }
+    nav { display: flex; align-items: center; gap: 2px; }
+    nav a { white-space: nowrap; }
     nav a:not(.btn) {
       color: var(--texte); text-decoration: none; padding: 8px 10px; border-radius: 8px; font-size: .92rem; font-weight: 500;
     }
@@ -59,7 +56,7 @@ import { ECOLE } from '../data/ecole';
     .burger { display: none; background: none; border: 0; cursor: pointer; padding: 8px; }
     .burger span { display: block; width: 24px; height: 2px; background: var(--bleu-nuit); margin: 5px 0; }
 
-    @media (max-width: 1080px) {
+    @media (max-width: 1240px) {
       .burger { display: block; }
       nav {
         display: none; position: absolute; top: 76px; left: 0; right: 0; background: #fff;

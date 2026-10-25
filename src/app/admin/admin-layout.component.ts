@@ -9,7 +9,7 @@ import { SupabaseService } from '../services/supabase.service';
     <div class="admin">
       <header>
         <div class="conteneur barre">
-          <a routerLink="/admin" class="titre"><span class="embleme">KPDK</span> Administration</a>
+          <a routerLink="/admin" class="titre"><img class="embleme" src="logo-256.png" alt="" width="40" height="40"> Administration</a>
           <div class="droite">
             <span class="email">{{ sb.session()?.user?.email }}</span>
             <a routerLink="/" class="lien">Voir le site</a>
@@ -33,8 +33,7 @@ import { SupabaseService } from '../services/supabase.service';
     header { background: var(--bleu-nuit); color: #fff; }
     .barre { display: flex; justify-content: space-between; align-items: center; height: 64px; gap: 12px; }
     .titre { color: #fff; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 10px; }
-    .embleme { width: 36px; height: 36px; border-radius: 9px; border: 2px solid var(--or); color: var(--or);
-      display: grid; place-items: center; font-size: .65rem; font-weight: 700; }
+    .embleme { width: 40px; height: 40px; border-radius: 50%; background: #fff; }
     .droite { display: flex; align-items: center; gap: 16px; font-size: .88rem; }
     .email { color: #c9d1e3; }
     .lien { color: #fff; background: none; border: 0; font: inherit; cursor: pointer; text-decoration: none; }

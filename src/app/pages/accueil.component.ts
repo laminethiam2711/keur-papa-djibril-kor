@@ -21,11 +21,8 @@ import { Actualite, SupabaseService } from '../services/supabase.service';
             <a routerLink="/contact" class="btn btn-contour">Nous contacter</a>
           </div>
         </div>
-        <div class="hero-visuel" aria-hidden="true">
-          <div class="arche">
-            <span class="arabe grand">اقرأ</span>
-            <span class="sous">« Lis » — le premier mot révélé</span>
-          </div>
+        <div class="hero-visuel">
+          <img class="logo-hero" src="logo.png" alt="Logo de l'École franco-arabe Keur Papa Djibril Kor" width="320" height="320">
         </div>
       </div>
     </section>
@@ -146,6 +143,8 @@ import { Actualite, SupabaseService } from '../services/supabase.service';
     .slogan { color: #d6dcea; font-size: 1.1rem; max-width: 540px; }
     .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
     .hero-visuel { display: flex; justify-content: center; }
+    .logo-hero { width: min(320px, 100%); height: auto; border-radius: 50%; background: #fff;
+      box-shadow: 0 0 0 10px rgba(201,151,58,.25), 0 20px 60px rgba(0,0,0,.35); }
     .arche {
       width: 280px; height: 340px; border: 3px solid var(--or); border-radius: 140px 140px 16px 16px;
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;

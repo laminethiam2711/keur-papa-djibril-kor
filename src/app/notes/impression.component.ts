@@ -70,6 +70,7 @@ const TERMS_EN = ['FIRST TERM EXAMINATION', 'SECOND TERM EXAMINATION', 'THIRD TE
               <h1 class="ecole-nom">KEUR PAPA DJIBRIL KOR</h1>
               <p class="niveaux">PRÉSCOLAIRE – ÉLÉMENTAIRE</p>
               <p class="adresse">{{ adresse(d) }} · TÉL : {{ telephones }}</p>
+              <img class="logo-couverture" src="logo.png" alt="">
               <div class="cartouche">RELEVÉ DE NOTES</div>
               <div class="identite">
                 <p><b>Prénom et Nom :</b> {{ l.eleve.prenom }} {{ l.eleve.nom }}</p>
@@ -191,6 +192,7 @@ const TERMS_EN = ['FIRST TERM EXAMINATION', 'SECOND TERM EXAMINATION', 'THIRD TE
               <h1 class="ecole-nom ar">كر بابا جبريل كور</h1>
               <p class="niveaux">PRÉSCOLAIRE – ÉLÉMENTAIRE</p>
               <p class="adresse">{{ adresse(d) }}</p>
+              <img class="logo-couverture" src="logo.png" alt="">
               <div class="cartouche ar">كشف الدرجات الإختبارات</div>
               <div class="identite" dir="rtl">
                 <p><b>الإسم و اللقب :</b> {{ l.eleve.prenom }} {{ l.eleve.nom }}</p>
@@ -238,6 +240,7 @@ const TERMS_EN = ['FIRST TERM EXAMINATION', 'SECOND TERM EXAMINATION', 'THIRD TE
           @let pi = periodeEn() - 1;
           @let r = l.periodes[pi];
           <section class="page portrait en">
+            <img class="logo-en" src="logo.png" alt="">
             <p class="en-ligne"><b>IA</b>: PIKINE GUEDIAWAYE</p>
             <p class="en-ligne"><b>IEF</b>: THIAROYE</p>
             <p class="en-ligne grand"><b>PRIVATE SCHOOL</b>: <span>(FRANCO-ARAB) Ecole Keur Papa Djibril Kor</span></p>
@@ -276,7 +279,7 @@ const TERMS_EN = ['FIRST TERM EXAMINATION', 'SECOND TERM EXAMINATION', 'THIRD TE
           <p class="devise">UN PEUPLE – UN BUT – UNE FOI</p>
           <p class="min">MINISTÈRE DE L'ÉDUCATION NATIONALE<br>IA DE PIKINE-GUÉDIAWAYE · IEF DE THIAROYE</p>
         </div>
-        <div class="embleme">KPDK</div>
+        <img class="embleme" src="logo.png" alt="">
       </div>
     </ng-template>
   `,

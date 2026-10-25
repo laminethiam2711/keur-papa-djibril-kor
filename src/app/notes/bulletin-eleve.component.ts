@@ -49,9 +49,12 @@ import { ECOLE } from '../data/ecole';
 
           <div class="np-carte bulletin-imprimable">
             <div class="np-bandeau">
-              <div>
-                <h2>École franco-arabe Keur Papa Djibril Kor</h2>
-                <p>Année scolaire {{ d.classe.annee }} · {{ d.classe.etablissement }}</p>
+              <div class="ecole">
+                <img src="logo-256.png" alt="" width="58" height="58">
+                <div>
+                  <h2>École franco-arabe Keur Papa Djibril Kor</h2>
+                  <p>Année scolaire {{ d.classe.annee }} · {{ d.classe.etablissement }} · Tél. {{ ecole.telephones[0] }}</p>
+                </div>
               </div>
               <span class="np-badge-contour">
                 {{ titreReleve() }} — {{ onglet() === 'annee' ? 'Bilan annuel' : libellePeriode(bulletin(), $any(onglet())) }}
@@ -166,6 +169,8 @@ import { ECOLE } from '../data/ecole';
     </div>
   `,
   styles: `
+    .ecole { display: flex; align-items: center; gap: 14px; }
+    .ecole img { width: 58px; height: 58px; border-radius: 50%; background: #fff; padding: 2px; flex-shrink: 0; }
     .outils { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
     .droite { display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto; }
     .defile { overflow-x: auto; }

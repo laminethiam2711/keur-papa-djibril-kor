@@ -6,7 +6,7 @@ const config: CapacitorConfig = {
   appName: 'Keur Papa Djibril Kor',
   webDir: 'dist/keur-papa-djibril-kor/browser',
   android: {
-    backgroundColor: '#13254a',
+    backgroundColor: '#ffffff',
   },
 };
 
