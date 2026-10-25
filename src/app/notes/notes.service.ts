@@ -26,6 +26,8 @@ export interface Eleve {
   lieu_naissance: string;
   matricule: string;
   telephone: string;
+  cantine?: boolean;    // options payantes (module Paiements)
+  transport?: boolean;
 }
 
 export interface Appreciation {

@@ -57,6 +57,16 @@ Mise en place : exécuter `supabase/notes.sql` puis `supabase/matricules.sql` da
 
 Matricules : attribués automatiquement par la base (`KPDK-2026-0001`…), compteur par année, doublons interdits.
 
+## Paiements de la scolarité
+Onglet **Paiements** de l'espace admin (installer d'abord `supabase/paiements.sql`) :
+- **Tarifs** par niveau et par année : inscription, tenue/fournitures, mensualité, cantine, transport (F CFA) ;
+- mensualités d'**octobre à juin** (9 mois) ; cantine et transport seulement pour les élèves inscrits à l'option ;
+- **encaissement** (espèces, Wave, Orange Money) avec **reçu numéroté automatiquement** par la base (`R2026-00001`…),
+  imprimé en deux exemplaires (parent / école) ;
+- **suivi** : encaissé du jour / du mois / de l'année, retards à ce jour, relance du parent par WhatsApp.
+
+Règles dans `src/app/paiements/regles.ts`.
+
 ## Structure
 ```
 src/app/

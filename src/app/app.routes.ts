@@ -41,6 +41,13 @@ export const routes: Routes = [
     title: 'Impression des bulletins',
   },
   {
+    // Reçu de paiement imprimable
+    path: 'admin/recu/:numero',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./paiements/recu.component').then((m) => m.RecuComponent),
+    title: 'Reçu de paiement',
+  },
+  {
     path: 'admin',
     component: AdminLayoutComponent,
     canActivate: [adminGuard],
@@ -56,6 +63,10 @@ export const routes: Routes = [
       { path: 'classes/:id', loadComponent: () => import('./notes/classe-detail.component').then((m) => m.ClasseDetailComponent), title: 'Élèves — Administration' },
       { path: 'saisie/:id', loadComponent: () => import('./notes/saisie.component').then((m) => m.SaisieComponent), title: 'Saisie des notes — Administration' },
       { path: 'eleve/:classe/:eleve', loadComponent: () => import('./notes/bulletin-eleve.component').then((m) => m.BulletinEleveComponent), title: 'Bulletin de l’élève — Administration' },
+      // ----- Paiements de la scolarité -----
+      { path: 'paiements', loadComponent: () => import('./paiements/paiements.component').then((m) => m.PaiementsComponent), title: 'Paiements — Administration' },
+      { path: 'paiements/eleve/:id', loadComponent: () => import('./paiements/paiement-eleve.component').then((m) => m.PaiementEleveComponent), title: 'Paiements de l’élève — Administration' },
+      { path: 'tarifs', loadComponent: () => import('./paiements/tarifs.component').then((m) => m.TarifsComponent), title: 'Tarifs — Administration' },
       { path: 'bulletins/:id', loadComponent: () => import('./notes/bulletins.component').then((m) => m.BulletinsComponent), title: 'Bulletins — Administration' },
     ],
   },

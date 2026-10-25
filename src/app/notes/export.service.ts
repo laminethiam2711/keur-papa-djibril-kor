@@ -63,12 +63,27 @@ export class ExportService {
     for (const c of classes) lignesClasses.push([this.t(c.nom), this.t(c.niveau), this.t(c.annee), this.t(c.etablissement), this.t(c.maitre),
       this.n(c.bareme), this.t(c.modele_fr === 'controle' ? 'Modèle 2' : 'Modèle 1'), this.t(c.avec_arabe ? 'Oui' : 'Non'), this.t(c.avec_anglais ? 'Oui' : 'Non')]);
 
+    // Paiements (si le module est installé)
+    const lignesPaie: Cellule[][] = [this.entete(['Date', 'Reçu', 'Matricule', 'Élève', 'Classe', 'Frais', 'Mois', 'Montant (F CFA)', 'Moyen', 'Référence', 'Note'])];
+    const nomsEleves = new Map<number, { nom: string; matricule: string; classe: string }>();
+    for (const c of classes) for (const e of await this.ns.eleves(c.id!)) nomsEleves.set(e.id!, { nom: `${e.prenom} ${e.nom}`, matricule: e.matricule, classe: c.nom });
+    for (const annee of [...new Set(classes.map((c) => c.annee))]) {
+      const res = await this.sb.db.from('paiements').select('*').eq('annee', annee).order('date_paiement').limit(10000);
+      for (const p of (res.data ?? []) as { date_paiement: string; numero_recu: string; eleve_id: number; type: string; mois: number | null; montant: number; moyen: string; reference: string; note: string }[]) {
+        const e = nomsEleves.get(p.eleve_id);
+        lignesPaie.push([this.t(this.date(p.date_paiement)), this.t(p.numero_recu), this.t(e?.matricule), this.t(e?.nom), this.t(e?.classe),
+          this.t(p.type), this.t(p.mois ? ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'][p.mois - 1] : ''),
+          this.n(p.montant), this.t(p.moyen), this.t(p.reference), this.t(p.note)]);
+      }
+    }
+
     await this.ecrire([
       { sheet: 'Élèves', data: lignesEleves, columns: this.largeurs([18, 16, 16, 12, 14, 16, 12, 22, 11]), stickyRowsCount: 1 },
       { sheet: 'Moyennes', data: lignesMoy, columns: this.largeurs([12, 10, 18, 24, 9, 8, 9, 8, 9, 8, 12, 11, 26]), stickyRowsCount: 1 },
       { sheet: 'Notes', data: lignesNotes, columns: this.largeurs([12, 10, 16, 13, 18, 24, 24, 26, 8, 7]), stickyRowsCount: 1 },
       { sheet: 'Classes', data: lignesClasses, columns: this.largeurs([12, 12, 11, 22, 18, 11, 14, 8, 8]), stickyRowsCount: 1 },
       { sheet: 'Pré-inscriptions', data: lignesInsc, columns: this.largeurs([12, 22, 12, 14, 26, 20, 16, 11]), stickyRowsCount: 1 },
+      { sheet: 'Paiements', data: lignesPaie, columns: this.largeurs([11, 14, 18, 24, 10, 12, 8, 15, 13, 14, 24]), stickyRowsCount: 1 },
       { sheet: 'Messages', data: lignesMsg, columns: this.largeurs([12, 20, 16, 60, 6]), stickyRowsCount: 1 },
     ], `Sauvegarde-KPDK-${this.aujourdhui()}.xlsx`);
 

@@ -138,7 +138,7 @@ export function maxMatiere(classe: ClasseConfig, bulletin: BulletinCode, matiere
 export const LIBELLES_BULLETIN: Record<BulletinCode, string> = { fr: 'Français', ar: 'Arabe', en: 'Anglais' };
 export const LIBELLES_EVALUATION: Record<Evaluation, string> = { composition: 'Composition', controle: 'Contrôle' };
 export const PERIODES = [1, 2, 3] as const;
-export const NIVEAUX = ['Préscolaire', 'CI', 'CP', 'CE1', 'CE2', 'CM1', 'CM2'];
+export const NIVEAUX = ['Crèche', 'Préscolaire', 'CI', 'CP', 'CE1', 'CE2', 'CM1', 'CM2'];
 export const DECISIONS = ['Passe en classe supérieure', 'Redouble la classe', 'Test de passage', 'Cours de vacances', 'Exclu(e)'];
 
 export function libellePeriode(bulletin: BulletinCode, p: number): string {

@@ -92,6 +92,7 @@ import { Classe, Eleve, NotesService } from './notes.service';
                       <td>{{ e.telephone || '—' }}</td>
                       <td class="droite">
                         <a class="mini" [routerLink]="['/admin/eleve', c.id, e.id]">Bulletin</a>
+                        <a class="mini" [routerLink]="['/admin/paiements/eleve', e.id]">Paiements</a>
                         <button class="mini" (click)="modifierEleve(e)">Modifier</button>
                         <button class="mini danger" (click)="supprimerEleve(e)" aria-label="Supprimer">✕</button>
                       </td>
