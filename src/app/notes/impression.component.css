@@ -1,0 +1,147 @@
+/* ====== Bulletins imprimables (A4) ====== */
+:host {
+  display: block;
+  background: #e9ecf1;
+  min-height: 100vh;
+  padding: 72px 16px 32px;
+  font-family: 'Times New Roman', Times, serif;
+  color: #000;
+}
+
+.barre {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+  display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+  background: var(--bleu-nuit); color: #fff; font-family: 'Poppins', sans-serif; font-size: .9rem;
+}
+.barre span { margin-right: auto; }
+.barre button {
+  font: inherit; font-weight: 600; border: 0; border-radius: 999px; padding: 8px 18px; cursor: pointer;
+  background: var(--or); color: var(--bleu-nuit);
+}
+.barre button.sec { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.5); }
+.erreur, .chargement { font-family: 'Poppins', sans-serif; text-align: center; }
+.erreur { color: #a12a1f; }
+
+/* ---- Pages ---- */
+.page {
+  background: #fff;
+  margin: 0 auto 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.12);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.paysage { width: 297mm; height: 210mm; padding: 9mm; display: flex; gap: 12mm; page: paysage; }
+.portrait { width: 210mm; min-height: 297mm; padding: 20mm 22mm; page: portrait; }
+.paysage > table { width: 100%; }
+.paysage:has(> table) { display: block; }
+
+.moitie {
+  flex: 1; border: 3px double #000; padding: 6mm 7mm;
+  display: flex; flex-direction: column; text-align: center;
+}
+
+/* ---- Tableaux ---- */
+.t { border-collapse: collapse; width: 100%; font-size: 10.5pt; }
+.t th, .t td { border: 1px solid #000; padding: 2px 4px; text-align: center; vertical-align: middle; }
+.t th { font-weight: 700; }
+.t .g { text-align: left; }
+.t.ar .g { text-align: right; }
+.haut td, .haut th { height: 15mm; }
+.petit-texte { font-size: 8.5pt; }
+
+.cadre-double { border: 4px double #000; padding: 3mm; margin-bottom: 6mm; }
+.titre-tableau { margin: 0 0 3mm; font-size: 14pt; text-decoration: underline; }
+.titre-tableau.ar { font-family: 'Amiri', serif; text-decoration: none; }
+.important-titre { color: #c00; font-weight: 700; font-size: 13pt; margin: 2mm 0; }
+.important { font-size: 10.5pt; margin: 0 0 6mm; }
+.decision .t td { font-family: Calibri, Arial, sans-serif; font-size: 8.5pt; height: 6.5mm; }
+.decision .dir { width: 45%; font-size: 12pt; }
+.coche { width: 10mm; font-size: 12pt !important; }
+.signature { vertical-align: top; }
+.merci { color: #c00; margin-top: auto; font-size: 10pt; }
+.noir { background: #000; color: #fff; font-family: 'Amiri', serif; }
+
+/* ---- Couverture ---- */
+.entete-officiel { display: flex; align-items: center; justify-content: space-between; gap: 3mm; }
+.entete-officiel p { margin: 0; line-height: 1.25; }
+.rep { font-weight: 700; font-size: 10pt; }
+.devise { font-size: 7pt; font-weight: 700; }
+.min { font-size: 7.5pt; font-weight: 700; margin-top: 2mm !important; }
+.drapeau { display: flex; width: 22mm; height: 14mm; flex-shrink: 0; }
+.drapeau span { flex: 1; display: grid; place-items: center; }
+.drapeau .v { background: #00853f; }
+.drapeau .j { background: #fdef42; color: #00853f; font-size: 9pt; }
+.drapeau .r { background: #e31b23; }
+.embleme {
+  width: 16mm; height: 16mm; flex-shrink: 0; border-radius: 3mm; border: 2px solid var(--or);
+  background: var(--bleu-nuit); color: var(--or); display: grid; place-items: center;
+  font-family: Arial, sans-serif; font-weight: 700; font-size: 8pt;
+}
+.ecole-titre { font-family: Calibri, Arial, sans-serif; font-size: 20pt; margin: 5mm 0 1mm; color: #000; }
+.ecole-nom {
+  font-family: Georgia, serif; font-size: 22pt; margin: 0; color: var(--bleu-nuit);
+  letter-spacing: .5px; text-shadow: 1px 1px 0 var(--or);
+}
+.ecole-nom.ar { font-family: 'Amiri', serif; font-size: 30pt; text-shadow: none; color: var(--vert); margin: 2mm 0; }
+.ecole-ligne { font-weight: 700; font-size: 10pt; margin: 2mm 0 0; }
+.tel { color: #c00; font-weight: 700; font-size: 10pt; margin: 0; }
+.niveaux { font-weight: 700; font-size: 9.5pt; margin: 1mm 0; }
+.adresse { font-size: 8.5pt; margin: 0 0 3mm; }
+.cartouche {
+  border: 3px double #000; padding: 2mm 6mm; margin: 4mm auto; font-size: 22pt; display: inline-block;
+}
+.cartouche.ar { font-family: 'Amiri', serif; font-weight: 700; font-size: 18pt; }
+.identite { text-align: left; font-size: 11.5pt; margin: 2mm 0; }
+.identite[dir='rtl'] { text-align: right; font-family: 'Amiri', serif; font-size: 13pt; }
+.identite p { margin: 2.5mm 0; border-bottom: 1px dotted #555; padding-bottom: 1mm; }
+.annee { font-weight: 700; font-size: 12pt; margin-top: auto; }
+
+/* ---- Grille de notes ---- */
+.notes { font-size: 9pt; line-height: 1.15; }
+.notes th { font-size: 8.5pt; }
+.notes th, .notes td { padding: 1px 3px; }
+.notes td { height: 4.9mm; }
+.notes .dom { font-weight: 400; font-size: 9pt; width: 22mm; }
+.notes .obs { width: 32mm; font-weight: 400; }
+.obs-cell { vertical-align: top !important; text-align: left !important; font-size: 8.5pt; }
+.ar .obs-cell { text-align: right !important; font-family: 'Amiri', serif; font-size: 10pt; }
+.obs-trim { margin: 0 0 2mm; }
+.ctrl { color: #444; font-size: 8.5pt; }
+.sign td { height: 8.5mm; vertical-align: top; }
+.annuel { display: flex; justify-content: space-between; font-size: 12pt; margin: 4mm 6mm 0; }
+
+/* ---- Arabe ---- */
+.ar { font-family: 'Amiri', 'Times New Roman', serif; }
+.ar th { font-size: 12pt; }
+.ar .mat-titre { font-size: 16pt; }
+.ar .sous { font-size: 9pt; font-weight: 400; }
+.nom-ar { font-size: 12pt; font-weight: 700; }
+.fr { font-family: Arial, sans-serif; font-size: 7.5pt; font-weight: 700; text-transform: uppercase; }
+.sur { color: #555; font-size: 8.5pt; }
+
+/* ---- Anglais ---- */
+.en { font-family: 'Times New Roman', serif; font-size: 13pt; }
+.en-ligne { margin: 0 0 4mm; font-size: 13pt; }
+.en-ligne.grand b { font-size: 14pt; }
+.en-ligne span { font-size: 11.5pt; }
+.en-id { margin: 10mm 0 8mm; }
+.en-id p { margin: 0 0 3mm; }
+.en-titre { text-align: center; text-decoration: underline; font-size: 13pt; margin: 6mm 0 4mm; }
+.en-table { font-size: 10.5pt; }
+.en-table th { font-family: Arial, sans-serif; font-size: 10pt; padding: 4mm 2mm; }
+.en-table td { padding: 3mm 2mm; }
+.en-table td:first-child { width: 42%; }
+.en-signatures { display: flex; justify-content: space-around; margin: 8mm 0 22mm; font-size: 8pt; font-weight: 700; text-decoration: underline; }
+.en-stats th { font-size: 8.5pt; padding: 4mm 2mm; }
+.en-stats td { width: 14%; }
+
+/* ---- Impression ---- */
+@page paysage { size: A4 landscape; margin: 0; }
+@page portrait { size: A4 portrait; margin: 0; }
+@media print {
+  :host { background: #fff; padding: 0; }
+  .no-print { display: none !important; }
+  .page { margin: 0; box-shadow: none; break-after: page; }
+  .page:last-of-type { break-after: auto; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

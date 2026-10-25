@@ -58,7 +58,8 @@ export class SupabaseService {
     this.client.auth.onAuthStateChange((_e, s) => this.session.set(s));
   }
 
-  private get db(): SupabaseClient {
+  /** Client Supabase (utilisé aussi par le service des notes). */
+  get db(): SupabaseClient {
     if (!this.client) throw new Error('Supabase n’est pas encore configuré (voir supabase.config.ts).');
     return this.client;
   }

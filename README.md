@@ -39,6 +39,22 @@ npx cap sync android
 npx cap open android
 ```
 
+## Plateforme de notes et bulletins
+Dans l'espace admin, onglet **Notes et bulletins** :
+1. **Classes** : nom, niveau, maître, année, moyenne sur 10 ou 20, modèle du relevé de français, relevés arabe / anglais.
+2. **Élèves** : ajout un par un ou collage d'une liste ; notes maximales par matière.
+3. **Saisie des notes** : grille par classe, relevé, trimestre (et contrôle / composition) ; total, moyenne et rang calculés en direct.
+4. **Bulletins** : moyennes, rangs, statistiques de la classe, décision du conseil, impression A4 (ou PDF) par élève ou pour toute la classe.
+
+Règles de calcul (`src/app/notes/calcul.ts`) :
+- moyenne = total des notes ÷ total des maximums × barème (10 ou 20 ; l'anglais toujours sur 10) ;
+- seule la **composition** compte (le contrôle est affiché pour information) ;
+- les matières non notées ne sont pas comptées ;
+- rang : les ex aequo ont le même rang ; moyenne annuelle = moyenne des trimestres.
+
+Les matières de chaque relevé sont dans `src/app/notes/modeles.ts`.
+Mise en place : exécuter `supabase/notes.sql` dans le SQL Editor de Supabase (une seule fois).
+
 ## Structure
 ```
 src/app/
@@ -47,8 +63,10 @@ src/app/
 ├── services/             → accès à la base (SupabaseService)
 ├── layout/               → en-tête, pied de page, bouton WhatsApp
 ├── pages/                → les 9 pages du site
-└── admin/                → espace administrateur (connexion, tableau de bord, gestion)
+├── admin/                → espace administrateur (connexion, tableau de bord, gestion)
+└── notes/                → plateforme de notes : modèles, calculs, saisie, bulletins
 supabase/schema.sql       → tables, sécurité et stockage
+supabase/notes.sql        → tables de la plateforme de notes
 ```
 
 ## Espace administrateur (Supabase)

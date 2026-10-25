@@ -22,6 +22,7 @@ import { SupabaseService } from '../services/supabase.service';
           <a routerLink="/admin/photos" routerLinkActive="actif">Photos</a>
           <a routerLink="/admin/inscriptions" routerLinkActive="actif">Pré-inscriptions</a>
           <a routerLink="/admin/messages" routerLinkActive="actif">Messages</a>
+          <a routerLink="/admin/classes" routerLinkActive="actif" [routerLinkActiveOptions]="{ exact: false }" class="notes">Notes et bulletins</a>
         </nav>
       </header>
       <main class="conteneur contenu"><router-outlet /></main>

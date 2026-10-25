@@ -34,6 +34,13 @@ export const routes: Routes = [
   // ----- Espace administrateur -----
   { path: 'admin/connexion', component: ConnexionComponent, title: 'Connexion — Administration' },
   {
+    // Page d'impression des bulletins (sans le menu de l'administration)
+    path: 'admin/impression/:id',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./notes/impression.component').then((m) => m.ImpressionComponent),
+    title: 'Impression des bulletins',
+  },
+  {
     path: 'admin',
     component: AdminLayoutComponent,
     canActivate: [adminGuard],
@@ -44,6 +51,11 @@ export const routes: Routes = [
       { path: 'photos', component: PhotosAdminComponent, title: 'Photos — Administration' },
       { path: 'inscriptions', component: InscriptionsAdminComponent, title: 'Pré-inscriptions — Administration' },
       { path: 'messages', component: MessagesAdminComponent, title: 'Messages — Administration' },
+      // ----- Plateforme de notes (chargée seulement quand on l'ouvre) -----
+      { path: 'classes', loadComponent: () => import('./notes/classes.component').then((m) => m.ClassesComponent), title: 'Classes et notes — Administration' },
+      { path: 'classes/:id', loadComponent: () => import('./notes/classe-detail.component').then((m) => m.ClasseDetailComponent), title: 'Élèves — Administration' },
+      { path: 'saisie/:id', loadComponent: () => import('./notes/saisie.component').then((m) => m.SaisieComponent), title: 'Saisie des notes — Administration' },
+      { path: 'bulletins/:id', loadComponent: () => import('./notes/bulletins.component').then((m) => m.BulletinsComponent), title: 'Bulletins — Administration' },
     ],
   },
   { path: '**', redirectTo: '' },
