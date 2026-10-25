@@ -5,6 +5,10 @@ const { app, BrowserWindow, shell, Menu } = require('electron');
 const path = require('path');
 
 const SITE = 'https://laminethiam2711.github.io/keur-papa-djibril-kor/';
+// Version « Administration » : s'ouvre directement sur l'espace de gestion (voir package.json → kpdkMode)
+const ADMIN = require('./package.json').kpdkMode === 'admin';
+const DEPART = ADMIN ? SITE + 'admin' : SITE;
+const TITRE = ADMIN ? 'Keur Papa Djibril Kor — Administration' : 'Keur Papa Djibril Kor';
 const ORIGINE = new URL(SITE).origin;
 const estDuSite = (url) => url.startsWith(SITE) || url === ORIGINE + '/keur-papa-djibril-kor';
 const estSupabase = (url) => /^https:\/\/[a-z0-9]+\.supabase\.co\//.test(url);
@@ -27,18 +31,19 @@ function reglerFenetre(win) {
 function creerFenetre() {
   const win = new BrowserWindow({
     width: 1280, height: 860, minWidth: 360, minHeight: 500,
-    title: 'Keur Papa Djibril Kor',
+    title: TITRE,
     icon: path.join(__dirname, 'build/icon.png'),
     backgroundColor: '#ffffff',
     autoHideMenuBar: true,
     webPreferences: { contextIsolation: true, nodeIntegration: false, spellcheck: true },
   });
   reglerFenetre(win);
+  if (ADMIN) win.on('page-title-updated', (e) => { e.preventDefault(); win.setTitle(TITRE); });
   // Pas de connexion Internet : page d'aide avec un bouton « Réessayer »
   win.webContents.on('did-fail-load', (_e, code, _desc, url, principal) => {
     if (principal && code !== -3) win.loadFile(path.join(__dirname, 'hors-ligne.html'), { query: { url } });
   });
-  win.loadURL(SITE);
+  win.loadURL(DEPART);
 }
 
 // Une seule fenêtre principale à la fois
@@ -52,6 +57,7 @@ if (!app.requestSingleInstanceLock()) {
   app.whenReady().then(() => {
     Menu.setApplicationMenu(Menu.buildFromTemplate([
       { label: 'Affichage', submenu: [
+        { label: ADMIN ? 'Accueil administration' : 'Accueil', click: (_m, w) => w && w.loadURL(DEPART) },
         { label: 'Actualiser', role: 'reload' }, { label: 'Zoom +', role: 'zoomIn' }, { label: 'Zoom −', role: 'zoomOut' },
         { label: 'Taille normale', role: 'resetZoom' }, { type: 'separator' }, { label: 'Plein écran', role: 'togglefullscreen' },
       ] },

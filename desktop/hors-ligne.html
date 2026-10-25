@@ -17,7 +17,7 @@
     <img src="build/icon.png" alt="">
     <h1>Pas de connexion Internet</h1>
     <p>L'application a besoin d'Internet pour afficher le site de l'école et les données (notes, paiements…).<br>Vérifiez votre connexion puis réessayez.</p>
-    <button onclick="location.href='https://laminethiam2711.github.io/keur-papa-djibril-kor/'">Réessayer</button>
+    <button onclick="location.href=new URLSearchParams(location.search).get('url')||'https://laminethiam2711.github.io/keur-papa-djibril-kor/'">Réessayer</button>
   </div>
 </body>
 </html>

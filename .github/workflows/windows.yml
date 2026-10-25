@@ -33,6 +33,8 @@ jobs:
 
       - run: npm run dist
 
+      - run: npm run dist:admin
+
       - name: Publier dans Releases (version « windows », sans toucher à l'APK)
         shell: bash
         env:
@@ -43,4 +45,4 @@ jobs:
               --title "Application Windows (ordinateur)" \
               --notes "Application Windows de l'École franco-arabe Keur Papa Djibril Kor. Téléchargez Keur-Papa-Djibril-Kor-Setup.exe puis ouvrez-le pour l'installer. Si Windows affiche « Windows a protégé votre ordinateur », cliquez sur « Informations complémentaires » puis « Exécuter quand même »."
           fi
-          gh release upload windows "dist/Keur-Papa-Djibril-Kor-Setup.exe" --clobber
+          gh release upload windows "dist/Keur-Papa-Djibril-Kor-Setup.exe" "dist/KPDK-Administration-Setup.exe" --clobber

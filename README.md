@@ -152,6 +152,8 @@ Les données sont stockées dans **Supabase** (base PostgreSQL + connexion + sto
 
 ## Application Windows (.exe)
 
-Téléchargement : https://github.com/laminethiam2711/keur-papa-djibril-kor/releases/download/windows/Keur-Papa-Djibril-Kor-Setup.exe
+Téléchargement (site complet) : https://github.com/laminethiam2711/keur-papa-djibril-kor/releases/download/windows/Keur-Papa-Djibril-Kor-Setup.exe
+
+Téléchargement (administration, s'ouvre directement sur l'espace de gestion) : https://github.com/laminethiam2711/keur-papa-djibril-kor/releases/download/windows/KPDK-Administration-Setup.exe
 
 Le dossier `desktop/` contient l'application Windows (Electron). Elle ouvre le site en ligne dans sa propre fenêtre, donc elle est toujours à jour. Elle est refabriquée automatiquement par `.github/workflows/windows.yml` quand `desktop/` change.

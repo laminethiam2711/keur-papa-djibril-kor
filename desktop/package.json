@@ -8,7 +8,8 @@
   "private": true,
   "scripts": {
     "start": "electron .",
-    "dist": "electron-builder --win nsis --publish never"
+    "dist": "electron-builder --win nsis --publish never",
+    "dist:admin": "electron-builder --win nsis --publish never -c.extraMetadata.kpdkMode=admin -c.appId=sn.keurpapadjibrilkor.admin -c.productName=\"KPDK Administration\" -c.extraMetadata.productName=\"KPDK Administration\" -c.extraMetadata.name=kpdk-administration -c.nsis.shortcutName=\"KPDK Administration\" -c.win.artifactName=KPDK-Administration-Setup.${ext}"
   },
   "devDependencies": {
     "electron": "33.2.1",
