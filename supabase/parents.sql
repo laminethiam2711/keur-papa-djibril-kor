@@ -111,7 +111,10 @@ as $$
 declare v_code text := upper(substr(md5(gen_random_uuid()::text), 1, 8));
 begin
   if not is_admin() then raise exception 'Réservé aux administrateurs'; end if;
-  update eleves set code_parent = v_code where id = p_eleve;
+  -- Même code pour toutes les années de l'élève (même matricule)
+  update eleves set code_parent = v_code
+    where id = p_eleve
+       or (matricule <> '' and matricule = (select matricule from eleves where id = p_eleve));
   return v_code;
 end;
 $$;

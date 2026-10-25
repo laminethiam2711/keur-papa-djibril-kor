@@ -80,6 +80,7 @@ export const routes: Routes = [
       { path: 'saisie/:id', loadComponent: () => import('./notes/saisie.component').then((m) => m.SaisieComponent), title: 'Saisie des notes — Administration' },
       { path: 'eleve/:classe/:eleve', loadComponent: () => import('./notes/bulletin-eleve.component').then((m) => m.BulletinEleveComponent), title: 'Bulletin de l’élève — Administration' },
       { path: 'appel/:id', loadComponent: () => import('./absences/appel.component').then((m) => m.AppelComponent), title: 'Absences et retards — Administration' },
+      { path: 'passage', loadComponent: () => import('./notes/passage.component').then((m) => m.PassageComponent), title: 'Passage de fin d’année — Administration' },
       { path: 'calendrier', loadComponent: () => import('./calendrier/calendrier-admin.component').then((m) => m.CalendrierAdminComponent), title: 'Calendrier — Administration' },
       // ----- Paiements de la scolarité -----
       { path: 'paiements', loadComponent: () => import('./paiements/paiements.component').then((m) => m.PaiementsComponent), title: 'Paiements — Administration' },

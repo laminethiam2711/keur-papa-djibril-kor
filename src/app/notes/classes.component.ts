@@ -20,6 +20,7 @@ const VIDE = (): Classe => ({
       <div class="boutons-tete">
         <button class="np-btn" (click)="sauvegarder()" [disabled]="exportEnCours()">
           {{ exportEnCours() ? 'Préparation…' : '💾 Sauvegarde Excel' }}</button>
+        <a class="np-btn" routerLink="/admin/passage">🎓 Passage de fin d’année</a>
         <button class="btn btn-vert" (click)="nouvelle()">+ Nouvelle classe</button>
       </div>
     </div>

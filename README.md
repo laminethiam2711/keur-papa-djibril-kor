@@ -130,3 +130,12 @@ Les données sont stockées dans **Supabase** (base PostgreSQL + connexion + sto
 - Exécuter `supabase/calendrier.sql` une fois.
 - Administration → **Calendrier** : ajouter rentrée, vacances, compositions, réunions, fêtes (par établissement ou pour tous).
 - Page publique **/calendrier** (lien dans Vie scolaire et en bas du site) et onglet « Calendrier » dans l'espace parents.
+
+## Passage de fin d'année
+
+- Exécuter `supabase/passage.sql` une fois (et ré-exécuter `supabase/parents.sql`).
+- Notes et bulletins → **🎓 Passage de fin d'année** :
+  1. choisir l'année qui se termine, créer d'un clic les classes de l'année suivante ;
+  2. choisir une classe : la décision du conseil propose « Classe sup. », « Redouble » ou « Ne revient pas » ;
+  3. choisir les classes d'arrivée, puis **Valider le passage**.
+- L'élève garde son matricule et son code parent ; l'espace parents affiche automatiquement la nouvelle année.
