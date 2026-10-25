@@ -5,6 +5,7 @@ import { BulletinCode, DECISIONS, LIBELLES_BULLETIN, libellePeriode, PERIODES } 
 import { formatRang, nombre } from './calcul';
 import { chargerBulletins, DonneesBulletin } from './donnees-bulletin';
 import { Classe, NotesService } from './notes.service';
+import { ExportService } from './export.service';
 
 @Component({
   selector: 'app-bulletins',
@@ -32,6 +33,7 @@ import { Classe, NotesService } from './notes.service';
             }
           </div>
         }
+        <button class="np-btn" (click)="exporter()" [disabled]="exportEnCours()">{{ exportEnCours() ? 'Préparation…' : '📊 Exporter en Excel' }}</button>
         <a class="btn btn-or" target="_blank" [href]="lienImpression()">🖨 Imprimer toute la classe</a>
       </div>
 
@@ -91,7 +93,7 @@ import { Classe, NotesService } from './notes.service';
     h1 { font-size: 1.5rem; margin: 0; }
     .petit { padding: 8px 16px; font-size: .88rem; }
     .choix { display: flex; flex-wrap: wrap; gap: 16px 32px; padding: 16px 20px; margin-bottom: 16px; align-items: center; }
-    .choix .btn { margin-left: auto; }
+    .choix .np-btn { margin-left: auto; }
     .groupe { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
     .groupe span { font-weight: 600; color: var(--bleu-nuit); margin-right: 4px; font-size: .9rem; }
     .groupe button { font: inherit; font-size: .88rem; border: 1px solid var(--bordure); background: #fff; padding: 6px 14px; border-radius: 999px; cursor: pointer; }
@@ -116,6 +118,19 @@ import { Classe, NotesService } from './notes.service';
 export class BulletinsComponent implements OnInit {
   id = input.required<string>();
   private ns = inject(NotesService);
+  private ex = inject(ExportService);
+  exportEnCours = signal(false);
+
+  async exporter() {
+    this.exportEnCours.set(true);
+    try {
+      await this.ex.exporterClasse(Number(this.id()), this.bulletin());
+    } catch (e) {
+      this.erreur.set('Export impossible : ' + (e as Error).message);
+    } finally {
+      this.exportEnCours.set(false);
+    }
+  }
   libelles = LIBELLES_BULLETIN;
   periodes = PERIODES;
   decisions = DECISIONS;

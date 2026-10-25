@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { ETABLISSEMENTS } from '../data/ecole';
 import { NIVEAUX } from './modeles';
 import { Classe, NotesService } from './notes.service';
+import { ExportService } from './export.service';
 
 const VIDE = (): Classe => ({
   nom: '', niveau: 'CI', etablissement: ETABLISSEMENTS[0].nom, maitre: '', annee: '2026-2027',
@@ -16,7 +17,11 @@ const VIDE = (): Classe => ({
   template: `
     <div class="entete">
       <h1>Classes et notes</h1>
-      <button class="btn btn-vert" (click)="nouvelle()">+ Nouvelle classe</button>
+      <div class="boutons-tete">
+        <button class="np-btn" (click)="sauvegarder()" [disabled]="exportEnCours()">
+          {{ exportEnCours() ? 'Préparation…' : '💾 Sauvegarde Excel' }}</button>
+        <button class="btn btn-vert" (click)="nouvelle()">+ Nouvelle classe</button>
+      </div>
     </div>
 
     @if (erreur()) { <p class="erreur">{{ erreur() }}</p> }
@@ -86,6 +91,7 @@ const VIDE = (): Classe => ({
     </div>
   `,
   styles: `
+    .boutons-tete { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
     .entete { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
     h1 { font-size: 1.6rem; margin: 0; }
     h2 { font-size: 1.15rem; }
@@ -112,6 +118,20 @@ const VIDE = (): Classe => ({
 })
 export class ClassesComponent implements OnInit {
   private ns = inject(NotesService);
+  private ex = inject(ExportService);
+  exportEnCours = signal(false);
+
+  async sauvegarder() {
+    this.exportEnCours.set(true);
+    this.erreur.set('');
+    try {
+      await this.ex.sauvegardeComplete();
+    } catch (e) {
+      this.erreur.set('Sauvegarde impossible : ' + (e as Error).message);
+    } finally {
+      this.exportEnCours.set(false);
+    }
+  }
   niveaux = NIVEAUX;
   etablissements = ETABLISSEMENTS;
   classes = signal<Classe[]>([]);
