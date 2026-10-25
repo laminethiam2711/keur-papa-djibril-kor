@@ -67,6 +67,14 @@ Onglet **Paiements** de l'espace admin (installer d'abord `supabase/paiements.sq
 
 Règles dans `src/app/paiements/regles.ts`.
 
+## Espace parents
+Page publique `/parents` (installer d'abord `supabase/parents.sql`) :
+- chaque élève reçoit un **code parent** secret de 8 caractères (visible par l'admin dans la liste des élèves) ;
+- le parent se connecte avec **matricule + code** : la fonction `espace_parent` de la base vérifie et renvoie
+  seulement les données de son enfant (notes, observations, décision, paiements) ; les camarades restent anonymes ;
+- 8 essais ratés en 15 minutes bloquent le matricule pendant 15 minutes ;
+- l'admin peut envoyer l'accès par WhatsApp, imprimer les fiches « code parent » d'une classe, ou créer un nouveau code.
+
 ## Structure
 ```
 src/app/

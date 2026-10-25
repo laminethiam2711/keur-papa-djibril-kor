@@ -26,6 +26,7 @@ export interface Eleve {
   lieu_naissance: string;
   matricule: string;
   telephone: string;
+  code_parent?: string; // code secret de l'espace parents
   cantine?: boolean;    // options payantes (module Paiements)
   transport?: boolean;
 }
@@ -131,6 +132,10 @@ export class NotesService {
       this.db.from('eleves').select('matricule').like('matricule', `${prefixe}%`).range(de, a));
     const max = existants.reduce((m, e) => Math.max(m, Number(e.matricule.slice(prefixe.length)) || 0), 0);
     return Array.from({ length: n }, (_, i) => prefixe + String(max + 1 + i).padStart(4, '0'));
+  }
+  /** Génère un nouveau code parent (l'ancien ne fonctionne plus). */
+  async nouveauCodeParent(id: number): Promise<string> {
+    return this.ok(await this.db.rpc('nouveau_code_parent', { p_eleve: id })) as string;
   }
   async supprimerEleve(id: number) {
     this.ok(await this.db.from('eleves').delete().eq('id', id));

@@ -1,6 +1,6 @@
 // Prépare tout ce qu'il faut pour afficher ou imprimer les bulletins d'une classe.
 import { BulletinCode, ModeleReleve, modelePour, PERIODES } from './modeles';
-import { indexer, resultatsAnnuels, resultatsPeriode, ResultatPeriode, statsClasse, StatsClasse } from './calcul';
+import { indexer, NoteLigne, resultatsAnnuels, resultatsPeriode, ResultatPeriode, statsClasse, StatsClasse } from './calcul';
 import { Appreciation, Classe, Eleve, NotesService } from './notes.service';
 
 export interface LigneBulletin {
@@ -27,6 +27,11 @@ export async function chargerBulletins(ns: NotesService, classeId: number, bulle
   const [classe, eleves, notes, apps] = await Promise.all([
     ns.classe(classeId), ns.eleves(classeId), ns.notes(classeId, bulletin), ns.appreciations(classeId, bulletin),
   ]);
+  return construireBulletins(classe, eleves, notes, apps, bulletin);
+}
+
+/** Calcule tout le bulletin à partir des données brutes (sans accès à la base). */
+export function construireBulletins(classe: Classe, eleves: Eleve[], notes: NoteLigne[], apps: Appreciation[], bulletin: BulletinCode): DonneesBulletin {
   const modele = modelePour(classe, bulletin);
   const idx = indexer(notes);
   const ids = eleves as { id: number }[];

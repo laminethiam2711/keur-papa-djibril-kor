@@ -30,6 +30,14 @@ export const routes: Routes = [
   { path: 'inscriptions', component: InscriptionsComponent, title: 'Inscriptions' + suffixe },
   { path: 'actualites', component: ActualitesComponent, title: 'Actualités' + suffixe },
   { path: 'contact', component: ContactComponent, title: 'Contact' + suffixe },
+  { path: 'parents', loadComponent: () => import('./parents/espace-parents.component').then((m) => m.EspaceParentsComponent), title: 'Espace parents' + suffixe },
+  {
+    // Fiches « code parent » à découper (une par élève)
+    path: 'admin/codes-parents/:id',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./parents/codes-parents.component').then((m) => m.CodesParentsComponent),
+    title: 'Codes parents',
+  },
 
   // ----- Espace administrateur -----
   { path: 'admin/connexion', component: ConnexionComponent, title: 'Connexion — Administration' },

@@ -72,11 +72,14 @@ import { Classe, Eleve, NotesService } from './notes.service';
             }
             <div class="liste-tete">
               <input class="recherche" type="search" placeholder="Rechercher un élève…" [ngModel]="recherche()" (ngModelChange)="recherche.set($event)">
-              <span>{{ elevesFiltres().length }} élève{{ elevesFiltres().length > 1 ? 's' : '' }}</span>
+              <span class="liste-droite">
+                <a class="np-btn" target="_blank" [href]="lienCodes()" title="Fiches à découper avec le matricule et le code de chaque élève">🖨 Codes parents</a>
+                <span>{{ elevesFiltres().length }} élève{{ elevesFiltres().length > 1 ? 's' : '' }}</span>
+              </span>
             </div>
             <div class="defile">
               <table class="np-table">
-                <thead><tr><th>N°</th><th>Élève</th><th>Naissance</th><th>Matricule</th><th>Téléphone</th><th></th></tr></thead>
+                <thead><tr><th>N°</th><th>Élève</th><th>Naissance</th><th>Matricule</th><th>Téléphone</th><th>Code parent</th><th></th></tr></thead>
                 <tbody>
                   @for (e of elevesFiltres(); track e.id; let i = $index) {
                     <tr [class.edition]="form.id === e.id">
@@ -90,6 +93,13 @@ import { Classe, Eleve, NotesService } from './notes.service';
                       <td>{{ e.date_naissance | date: 'dd/MM/yyyy' }}<span class="np-sous">{{ e.lieu_naissance }}</span></td>
                       <td>{{ e.matricule || '—' }}</td>
                       <td>{{ e.telephone || '—' }}</td>
+                      <td class="code-parent">
+                        @if (e.code_parent) {
+                          <code>{{ e.code_parent }}</code>
+                          @if (e.telephone) { <a class="mini wa" target="_blank" [href]="lienCodeWhatsapp(e)" title="Envoyer l'accès au parent sur WhatsApp">Envoyer</a> }
+                          <button class="mini" (click)="nouveauCode(e)" title="Créer un nouveau code (l'ancien ne marchera plus)">↻</button>
+                        } @else { <span class="np-sous">—</span> }
+                      </td>
                       <td class="droite">
                         <a class="mini" [routerLink]="['/admin/eleve', c.id, e.id]">Bulletin</a>
                         <a class="mini" [routerLink]="['/admin/paiements/eleve', e.id]">Paiements</a>
@@ -98,7 +108,7 @@ import { Classe, Eleve, NotesService } from './notes.service';
                       </td>
                     </tr>
                   } @empty {
-                    <tr><td colspan="6" class="vide">{{ recherche() ? 'Aucun élève trouvé.' : 'Aucun élève inscrit. Utilisez le formulaire ci-dessus.' }}</td></tr>
+                    <tr><td colspan="7" class="vide">{{ recherche() ? 'Aucun élève trouvé.' : 'Aucun élève inscrit. Utilisez le formulaire ci-dessus.' }}</td></tr>
                   }
                 </tbody>
               </table>
@@ -157,6 +167,10 @@ import { Classe, Eleve, NotesService } from './notes.service';
     .import textarea { width: 100%; font: inherit; padding: 10px 12px; border: 1px solid #d5dae3; border-radius: 10px; margin-bottom: 10px; }
     .liste-tete { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #e3e6ec; }
     .liste-tete span { color: var(--texte-doux); font-size: .88rem; }
+    .liste-droite { display: flex; align-items: center; gap: 12px; }
+    .code-parent { white-space: nowrap; }
+    .code-parent code { font-family: ui-monospace, monospace; font-weight: 700; color: var(--bleu-nuit); background: #f1f3f6; padding: 3px 7px; border-radius: 6px; letter-spacing: .06em; }
+    .wa { background: #e7f8ee !important; color: #128c4b !important; border-color: #bfe8cf !important; }
     .recherche { font: inherit; font-size: .9rem; padding: 9px 14px; border: 1px solid #d5dae3; border-radius: 10px; width: min(320px, 100%); }
     .defile { overflow-x: auto; }
     .n { color: var(--texte-doux); width: 48px; }
@@ -305,6 +319,33 @@ export class ClasseDetailComponent implements OnInit {
       await this.chargerEleves();
     } catch (e) {
       this.erreur.set((e as Error).message);
+    }
+  }
+
+  /** Lien vers les fiches « code parent » imprimables de la classe. */
+  lienCodes() {
+    const base = document.querySelector('base')?.getAttribute('href') ?? '/';
+    return `${base}admin/codes-parents/${this.id()}`;
+  }
+
+  /** Message WhatsApp au parent avec le lien, le matricule et le code. */
+  lienCodeWhatsapp(e: Eleve) {
+    const tel = e.telephone.replace(/\D/g, '');
+    const numero = tel.length === 9 ? '221' + tel : tel;
+    const lien = location.origin + (document.querySelector('base')?.getAttribute('href') ?? '/') + 'parents';
+    const texte = `Bonjour, voici l'accès à l'espace parents de l'École franco-arabe Keur Papa Djibril Kor pour ${e.prenom} ${e.nom} :\n` +
+      `${lien}\nMatricule : ${e.matricule}\nCode parent : ${e.code_parent}\n` +
+      `Vous y trouverez les notes, le bulletin et les paiements. Gardez ce code confidentiel.`;
+    return `https://wa.me/${numero}?text=${encodeURIComponent(texte)}`;
+  }
+
+  async nouveauCode(e: Eleve) {
+    if (!confirm(`Créer un nouveau code parent pour ${e.prenom} ${e.nom} ? L'ancien code ne fonctionnera plus.`)) return;
+    try {
+      await this.ns.nouveauCodeParent(e.id!);
+      await this.chargerEleves();
+    } catch (err) {
+      this.erreur.set((err as Error).message);
     }
   }
 

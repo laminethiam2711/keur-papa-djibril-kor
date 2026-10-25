@@ -9,7 +9,10 @@ import { ECOLE } from '../data/ecole';
     <div class="barre-info">
       <div class="conteneur barre-info-int">
         <span>Année scolaire {{ ecole.anneeScolaire }} · Inscriptions ouvertes</span>
-        <a [href]="'tel:' + ecole.telephones[0].replaceAll(' ', '')">{{ ecole.telephones[0] }}</a>
+        <span class="liens-haut">
+          <a routerLink="/parents" class="parents">👪 Espace parents</a>
+          <a [href]="'tel:' + ecole.telephones[0].replaceAll(' ', '')">{{ ecole.telephones[0] }}</a>
+        </span>
       </div>
     </div>
     <header>
@@ -30,6 +33,7 @@ import { ECOLE } from '../data/ecole';
           @for (lien of liens; track lien.url) {
             <a [routerLink]="lien.url" routerLinkActive="actif" [routerLinkActiveOptions]="{ exact: lien.url === '/' }" (click)="fermer()">{{ lien.texte }}</a>
           }
+          <a routerLink="/parents" class="lien-parents" (click)="fermer()">Espace parents</a>
           <a routerLink="/inscriptions" class="btn btn-or petit" (click)="fermer()">Inscrire mon enfant</a>
         </nav>
       </div>
@@ -39,6 +43,8 @@ import { ECOLE } from '../data/ecole';
     .barre-info { background: var(--bleu-nuit); color: #d6dcea; font-size: .82rem; }
     .barre-info-int { display: flex; justify-content: space-between; padding: 6px 16px; gap: 12px; }
     .barre-info a { color: var(--or); text-decoration: none; font-weight: 600; }
+    .liens-haut { display: flex; gap: 18px; }
+    .barre-info a.parents { color: #fff; }
     header { background: #fff; border-bottom: 1px solid var(--bordure); position: sticky; top: 0; z-index: 50; }
     .entete { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 76px; max-width: 1320px; }
     .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; flex-shrink: 0; }
@@ -48,6 +54,7 @@ import { ECOLE } from '../data/ecole';
     .logo-texte small { color: var(--vert); font-weight: 500; }
     nav { display: flex; align-items: center; gap: 2px; }
     nav a { white-space: nowrap; }
+    .lien-parents { display: none !important; }
     nav a:not(.btn) {
       color: var(--texte); text-decoration: none; padding: 8px 10px; border-radius: 8px; font-size: .92rem; font-weight: 500;
     }
@@ -64,6 +71,7 @@ import { ECOLE } from '../data/ecole';
         box-shadow: var(--ombre);
       }
       nav.ouvert { display: flex; }
+      .lien-parents { display: block !important; }
       nav a:not(.btn) { padding: 12px; }
       .petit { margin: 8px 0 0; justify-content: center; }
     }
