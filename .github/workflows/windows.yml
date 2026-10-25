@@ -1,0 +1,46 @@
+# Fabrique l'application Windows (installateur .exe) et la publie dans « Releases »
+# Lien de téléchargement fixe :
+# https://github.com/laminethiam2711/keur-papa-djibril-kor/releases/download/windows/Keur-Papa-Djibril-Kor-Setup.exe
+name: Fabriquer l'application Windows
+
+on:
+  push:
+    branches: [main]
+    paths: ['desktop/**', '.github/workflows/windows.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: windows
+  cancel-in-progress: true
+
+jobs:
+  exe:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: desktop
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npm install --no-audit --no-fund
+
+      - run: npm run dist
+
+      - name: Publier dans Releases (version « windows », sans toucher à l'APK)
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view windows >/dev/null 2>&1; then
+            gh release create windows --prerelease --latest=false \
+              --title "Application Windows (ordinateur)" \
+              --notes "Application Windows de l'École franco-arabe Keur Papa Djibril Kor. Téléchargez Keur-Papa-Djibril-Kor-Setup.exe puis ouvrez-le pour l'installer. Si Windows affiche « Windows a protégé votre ordinateur », cliquez sur « Informations complémentaires » puis « Exécuter quand même »."
+          fi
+          gh release upload windows "dist/Keur-Papa-Djibril-Kor-Setup.exe" --clobber

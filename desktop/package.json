@@ -1,0 +1,41 @@
+{
+  "name": "keur-papa-djibril-kor",
+  "productName": "Keur Papa Djibril Kor",
+  "version": "1.0.0",
+  "description": "Application Windows de l'École franco-arabe Keur Papa Djibril Kor",
+  "author": "Lamine Thiam",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win nsis --publish never"
+  },
+  "devDependencies": {
+    "electron": "33.2.1",
+    "electron-builder": "25.1.8"
+  },
+  "build": {
+    "appId": "sn.keurpapadjibrilkor.app",
+    "productName": "Keur Papa Djibril Kor",
+    "copyright": "École franco-arabe Keur Papa Djibril Kor",
+    "directories": { "output": "dist", "buildResources": "build" },
+    "files": ["main.js", "hors-ligne.html", "build/icon.png"],
+    "win": {
+      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "icon": "build/icon.ico",
+      "artifactName": "Keur-Papa-Djibril-Kor-Setup.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "Keur Papa Djibril Kor",
+      "installerLanguages": ["fr_FR"],
+      "language": "1036",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico"
+    }
+  }
+}

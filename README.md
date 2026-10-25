@@ -149,3 +149,9 @@ Les données sont stockées dans **Supabase** (base PostgreSQL + connexion + sto
 ## Mise à jour en une fois
 
 `supabase/mise-a-jour-2.sql` regroupe absences, calendrier, passage, enseignants et espace parents (prérequis : schema.sql, notes.sql, matricules.sql). On peut l'exécuter plusieurs fois.
+
+## Application Windows (.exe)
+
+Téléchargement : https://github.com/laminethiam2711/keur-papa-djibril-kor/releases/download/windows/Keur-Papa-Djibril-Kor-Setup.exe
+
+Le dossier `desktop/` contient l'application Windows (Electron). Elle ouvre le site en ligne dans sa propre fenêtre, donc elle est toujours à jour. Elle est refabriquée automatiquement par `.github/workflows/windows.yml` quand `desktop/` change.
