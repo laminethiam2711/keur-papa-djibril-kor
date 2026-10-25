@@ -10,7 +10,7 @@ import { SupabaseService } from '../services/supabase.service';
     <div class="fond motif">
       <form class="carte boite" (ngSubmit)="connecter()" #f="ngForm">
         <img class="embleme" src="logo-256.png" alt="Logo de l’école" width="96" height="96">
-        <h1>Espace administrateur</h1>
+        <h1>Administration et enseignants</h1>
         <p class="sous">École franco-arabe Keur Papa Djibril Kor</p>
 
         @if (!sb.actif) {
@@ -52,8 +52,8 @@ export class ConnexionComponent {
     this.envoi.set(true);
     this.erreur.set('');
     try {
-      await this.sb.connexion(this.email.trim(), this.motDePasse);
-      this.router.navigateByUrl('/admin');
+      const role = await this.sb.connexion(this.email.trim(), this.motDePasse);
+      this.router.navigateByUrl(role === 'enseignant' ? '/admin/mes-classes' : '/admin');
     } catch (e) {
       this.erreur.set((e as Error).message);
     } finally {

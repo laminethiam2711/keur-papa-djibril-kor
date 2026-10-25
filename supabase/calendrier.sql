@@ -20,6 +20,8 @@ create table if not exists public.evenements (
 create index if not exists evenements_date_idx on public.evenements (date_debut);
 
 alter table public.evenements enable row level security;
+drop policy if exists "tout le monde lit le calendrier public" on public.evenements;
+drop policy if exists "admin gere le calendrier" on public.evenements;
 create policy "tout le monde lit le calendrier public" on public.evenements
   for select using (public or public.is_admin());
 create policy "admin gere le calendrier" on public.evenements

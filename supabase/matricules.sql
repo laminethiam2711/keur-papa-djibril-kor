@@ -50,6 +50,10 @@ security definer
 set search_path = public
 as $$
 begin
+  -- Réinscription d'une année sur l'autre (passage.sql) : l'élève garde son matricule
+  if coalesce(current_setting('kpdk.reinscription', true), '') = 'on' and coalesce(new.matricule, '') <> '' then
+    return new;
+  end if;
   new.matricule := prochain_matricule((select annee from classes where id = new.classe_id));
   return new;
 end;
@@ -86,5 +90,9 @@ grant execute on function public.completer_matricules(bigint) to authenticated;
 revoke execute on function public.prochain_matricule(text) from public, anon, authenticated;
 
 -- Interdit les doublons (les élèves sans matricule ne sont pas concernés)
-create unique index if not exists eleves_matricule_unique
-  on public.eleves (matricule) where matricule <> '';
+-- (si le passage de fin d'année est installé, un matricule peut exister une fois par classe : voir passage.sql)
+do $$ begin
+  if to_regclass('public.eleves_matricule_classe_unique') is null then
+    create unique index if not exists eleves_matricule_unique on public.eleves (matricule) where matricule <> '';
+  end if;
+end $$;

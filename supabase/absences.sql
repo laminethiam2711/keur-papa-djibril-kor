@@ -22,5 +22,15 @@ create table if not exists public.absences (
 create index if not exists absences_classe_idx on public.absences (classe_id, date);
 
 alter table public.absences enable row level security;
+drop policy if exists "admin gere absences" on public.absences;
 create policy "admin gere absences" on public.absences
   for all to authenticated using (public.is_admin()) with check (public.is_admin());
+
+-- Si les comptes enseignants sont installés : l'enseignant fait l'appel de ses classes
+do $$ begin
+  if to_regprocedure('public.est_enseignant(bigint)') is not null then
+    execute 'drop policy if exists "enseignant fait l''appel" on public.absences';
+    execute 'create policy "enseignant fait l''appel" on public.absences for all to authenticated
+             using (public.est_enseignant(classe_id)) with check (public.est_enseignant(classe_id))';
+  end if;
+end $$;

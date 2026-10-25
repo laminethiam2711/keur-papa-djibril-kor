@@ -9,7 +9,7 @@ import { SupabaseService } from '../services/supabase.service';
     <div class="admin">
       <header>
         <div class="conteneur barre">
-          <a routerLink="/admin" class="titre"><img class="embleme" src="logo-256.png" alt="" width="40" height="40"> Administration</a>
+          <a [routerLink]="sb.roleActuel() === 'enseignant' ? '/admin/mes-classes' : '/admin'" class="titre"><img class="embleme" src="logo-256.png" alt="" width="40" height="40"> {{ sb.roleActuel() === 'enseignant' ? 'Espace enseignant' : 'Administration' }}</a>
           <div class="droite">
             <span class="email">{{ sb.session()?.user?.email }}</span>
             <a routerLink="/" class="lien">Voir le site</a>
@@ -17,14 +17,19 @@ import { SupabaseService } from '../services/supabase.service';
           </div>
         </div>
         <nav class="conteneur onglets">
-          <a routerLink="/admin" routerLinkActive="actif" [routerLinkActiveOptions]="{ exact: true }">Tableau de bord</a>
-          <a routerLink="/admin/actualites" routerLinkActive="actif">Actualités</a>
-          <a routerLink="/admin/photos" routerLinkActive="actif">Photos</a>
-          <a routerLink="/admin/inscriptions" routerLinkActive="actif">Pré-inscriptions</a>
-          <a routerLink="/admin/messages" routerLinkActive="actif">Messages</a>
-          <a routerLink="/admin/calendrier" routerLinkActive="actif">Calendrier</a>
-          <a routerLink="/admin/classes" routerLinkActive="actif" [routerLinkActiveOptions]="{ exact: false }" class="notes">Notes et bulletins</a>
-          <a routerLink="/admin/paiements" routerLinkActive="actif">Paiements</a>
+          @if (sb.roleActuel() === 'enseignant') {
+            <a routerLink="/admin/mes-classes" routerLinkActive="actif">Mes classes</a>
+          } @else {
+            <a routerLink="/admin" routerLinkActive="actif" [routerLinkActiveOptions]="{ exact: true }">Tableau de bord</a>
+            <a routerLink="/admin/actualites" routerLinkActive="actif">Actualités</a>
+            <a routerLink="/admin/photos" routerLinkActive="actif">Photos</a>
+            <a routerLink="/admin/inscriptions" routerLinkActive="actif">Pré-inscriptions</a>
+            <a routerLink="/admin/messages" routerLinkActive="actif">Messages</a>
+            <a routerLink="/admin/calendrier" routerLinkActive="actif">Calendrier</a>
+            <a routerLink="/admin/classes" routerLinkActive="actif" [routerLinkActiveOptions]="{ exact: false }" class="notes">Notes et bulletins</a>
+            <a routerLink="/admin/paiements" routerLinkActive="actif">Paiements</a>
+            <a routerLink="/admin/enseignants" routerLinkActive="actif">Enseignants</a>
+          }
         </nav>
       </header>
       <main class="conteneur contenu"><router-outlet /></main>

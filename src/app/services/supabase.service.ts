@@ -40,6 +40,8 @@ export interface Message {
   created_at?: string;
 }
 
+export type Role = 'admin' | 'enseignant';
+
 /** Point d'accès unique à la base de données Supabase. */
 @Injectable({ providedIn: 'root' })
 export class SupabaseService {
@@ -70,17 +72,50 @@ export class SupabaseService {
   }
 
   // ---------- Authentification ----------
-  async connexion(email: string, motDePasse: string) {
+  /** Connexion d'un administrateur ou d'un enseignant. Renvoie le rôle. */
+  async connexion(email: string, motDePasse: string): Promise<Role> {
     const { error } = await this.db.auth.signInWithPassword({ email, password: motDePasse });
-    if (error) throw new Error('E-mail ou mot de passe incorrect.');
-    if (!(await this.estAdmin())) {
-      await this.deconnexion();
-      throw new Error('Ce compte n’est pas administrateur.');
+    if (error) {
+      if (error.message.toLowerCase().includes('not confirmed')) throw new Error('Confirmez d’abord votre adresse e-mail (lien reçu par e-mail).');
+      throw new Error('E-mail ou mot de passe incorrect.');
     }
+    const role = await this.role();
+    if (!role) {
+      await this.deconnexion();
+      throw new Error('Ce compte n’a pas encore accès. Demandez à la direction de vous attribuer une classe.');
+    }
+    return role;
   }
 
   async deconnexion() {
+    this.roleCache = null;
+    this.classesEnseignant.set([]);
     await this.db.auth.signOut();
+  }
+
+  /** Classes de l'enseignant connecté (vide pour un administrateur). */
+  classesEnseignant = signal<number[]>([]);
+  roleActuel = signal<Role | null>(null);
+  private roleCache: { user: string; role: Role | null } | null = null;
+
+  /** 'admin', 'enseignant' ou null (pas connecté / pas d'accès). */
+  async role(): Promise<Role | null> {
+    if (!this.client) return null;
+    const { data } = await this.client.auth.getSession();
+    const user = data.session?.user;
+    if (!user) { this.roleActuel.set(null); return null; }
+    if (this.roleCache?.user === user.id) return this.roleCache.role;
+    let role: Role | null = null;
+    if (await this.estAdmin()) role = 'admin';
+    else {
+      const { data: lignes } = await this.client.from('enseignants').select('classe_id').eq('email', (user.email ?? '').toLowerCase());
+      const ids = ((lignes ?? []) as { classe_id: number }[]).map((l) => l.classe_id);
+      this.classesEnseignant.set(ids);
+      if (ids.length) role = 'enseignant';
+    }
+    this.roleCache = { user: user.id, role };
+    this.roleActuel.set(role);
+    return role;
   }
 
   async estAdmin(): Promise<boolean> {

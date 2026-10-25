@@ -139,3 +139,13 @@ Les données sont stockées dans **Supabase** (base PostgreSQL + connexion + sto
   2. choisir une classe : la décision du conseil propose « Classe sup. », « Redouble » ou « Ne revient pas » ;
   3. choisir les classes d'arrivée, puis **Valider le passage**.
 - L'élève garde son matricule et son code parent ; l'espace parents affiche automatiquement la nouvelle année.
+
+## Comptes enseignants
+
+- Exécuter `supabase/enseignants.sql` une fois.
+- Administration → **Enseignants** : nom, e-mail, mot de passe et classes. Le compte est créé directement (l'enseignant confirme son e-mail si Supabase le demande).
+- L'enseignant se connecte sur `/admin/connexion` et arrive sur **Mes classes** : saisie des notes, appel, bulletins — uniquement pour ses classes (protégé par la base).
+
+## Mise à jour en une fois
+
+`supabase/mise-a-jour-2.sql` regroupe absences, calendrier, passage, enseignants et espace parents (prérequis : schema.sql, notes.sql, matricules.sql). On peut l'exécuter plusieurs fois.
