@@ -1,7 +1,7 @@
 {
   "name": "keur-papa-djibril-kor",
   "productName": "Keur Papa Djibril Kor",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Application Windows de l'École franco-arabe Keur Papa Djibril Kor",
   "author": "Lamine Thiam",
   "main": "main.js",

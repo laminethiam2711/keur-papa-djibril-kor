@@ -1,7 +1,7 @@
 // Application Windows de l'École franco-arabe Keur Papa Djibril Kor.
 // Elle ouvre le site en ligne dans sa propre fenêtre : elle est donc toujours à jour,
 // sans rien réinstaller quand le site change.
-const { app, BrowserWindow, shell, Menu } = require('electron');
+const { app, BrowserWindow, shell, Menu, session } = require('electron');
 const path = require('path');
 
 const SITE = 'https://laminethiam2711.github.io/keur-papa-djibril-kor/';
@@ -38,6 +38,9 @@ function creerFenetre() {
     webPreferences: { contextIsolation: true, nodeIntegration: false, spellcheck: true },
   });
   reglerFenetre(win);
+  // Garder la connexion : la session (stockée dans le navigateur interne) est écrite
+  // sur le disque avant la fermeture, sinon il faudrait retaper l'e-mail et le mot de passe.
+  win.on('close', () => session.defaultSession.flushStorageData());
   if (ADMIN) win.on('page-title-updated', (e) => { e.preventDefault(); win.setTitle(TITRE); });
   // Pas de connexion Internet : page d'aide avec un bouton « Réessayer »
   win.webContents.on('did-fail-load', (_e, code, _desc, url, principal) => {
@@ -63,6 +66,9 @@ if (!app.requestSingleInstanceLock()) {
       ] },
     ]));
     creerFenetre();
+    // Sécurité : écrire aussi la session régulièrement (coupure de courant, arrêt du PC…)
+    setInterval(() => session.defaultSession.flushStorageData(), 30000);
   });
+  app.on('before-quit', () => session.defaultSession.flushStorageData());
   app.on('window-all-closed', () => app.quit());
 }
