@@ -88,6 +88,8 @@ export const ARABE: ModeleReleve = {
       m('ar_ecriture', 'Écriture', { nomAr: 'الخط' }),
       m('ar_chant', 'Chant', { nomAr: 'الأناشيد' }),
       m('ar_texte', 'Vocabulaire', { nomAr: 'النص' }),
+      m('ar_texte', 'Grammaire', { nomAr: 'النحو' }),
+      m('ar_texte', 'Morphologie', { nomAr: 'االصرف' }),
       m('ar_prod_ecrits', 'Production d’écrits', { nomAr: 'الإنتاج الكتابي' }),
     ] },
   ],
