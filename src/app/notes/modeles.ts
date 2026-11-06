@@ -50,8 +50,7 @@ export const FR_COMPOSITION: ModeleReleve = {
       m('edd_vivre_ensemble', 'Vivre ensemble'), m('edd_vdsm', 'VDSM'), m('edd_competence', 'Compétence'),
     ] },
     { nom: 'EPSA', matieres: [m('epsa_arts', 'Arts plastiques')] },
-    { nom: 'Éducation religieuse', matieres: [m('er_ressources', 'Ressources'), m('er_competence', 'Compétence')] },
-    { nom: 'Langue arabe', matieres: [m('la_ressources', 'Ressources'), m('la_competence', 'Compétence')] },
+   
   ],
 };
 
