@@ -50,7 +50,7 @@ export const FR_COMPOSITION: ModeleReleve = {
       m('edd_vivre_ensemble', 'Vivre ensemble'), m('edd_vdsm', 'VDSM'), m('edd_competence', 'Compétence'),
     ] },
     { nom: 'EPSA', matieres: [m('epsa_arts', 'Arts plastiques')] },
-   
+    
   ],
 };
 
@@ -88,8 +88,6 @@ export const ARABE: ModeleReleve = {
       m('ar_ecriture', 'Écriture', { nomAr: 'الخط' }),
       m('ar_chant', 'Chant', { nomAr: 'الأناشيد' }),
       m('ar_texte', 'Vocabulaire', { nomAr: 'النص' }),
-       m('ar_texte', 'Grammaire', { nomAr: 'النحو' }),
-       m('ar_texte', 'Morphologie', { nomAr: 'الصرف' }),
       m('ar_prod_ecrits', 'Production d’écrits', { nomAr: 'الإنتاج الكتابي' }),
     ] },
   ],
