@@ -12,6 +12,7 @@ export interface Matiere {
   nom: string;       // nom affiché
   nomAr?: string;    // nom arabe (relevé arabe)
   maxFixe?: number;  // note maximale imposée (relevé anglais)
+  niveaux?: string[]; // absent = affichée dans tous les niveaux
 }
 
 export interface Domaine {
@@ -86,9 +87,8 @@ export const ARABE: ModeleReleve = {
       m('ar_sira', 'Biographie du Prophète', { nomAr: 'السيرة النبوية' }),
       m('ar_dictee', 'Dictée préparée', { nomAr: 'الاملاء المنقول' }),
       m('ar_lecture', 'Lecture', { nomAr: 'القراءة' }),
-      m('ar_ecriture', 'Écriture', { nomAr: 'الخط' }),
+      m('ar_ecriture', 'Écriture', { nomAr: 'الخط', niveaux: ['CE1', 'CE2', 'CM1', 'CM2'] }),
       m('ar_chant', 'Chant', { nomAr: 'الأناشيد' }),
-      m('ar_vocabulaire', 'Vocabulaire', { nomAr: 'النص' }),
       m('ar_grammaire', 'Grammaire', { nomAr: 'النحو' }),
       m('ar_morphologie', 'Morphologie', { nomAr: 'الصرف' }),
       m('ar_prod_ecrits', 'Production d’écrits', { nomAr: 'الإنتاج الكتابي' }),
@@ -126,8 +126,10 @@ export function modelePour(classe: Pick<ClasseConfig, 'modele_fr'>, bulletin: Bu
   return classe.modele_fr === 'controle' ? FR_CONTROLE : FR_COMPOSITION;
 }
 
-export function toutesMatieres(modele: ModeleReleve): Matiere[] {
-  return modele.domaines.flatMap((d) => d.matieres);
+export function toutesMatieres(modele: ModeleReleve, niveau?: string): Matiere[] {
+  return modele.domaines
+    .flatMap((d) => d.matieres)
+    .filter((mat) => !niveau || !mat.niveaux || mat.niveaux.includes(niveau));
 }
 
 /** Note maximale d'une matière : imposée (anglais), sinon réglage de la classe, sinon le barème. */
