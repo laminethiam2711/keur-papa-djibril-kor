@@ -102,7 +102,12 @@ const TERMS_EN = ['FIRST TERM EXAMINATION', 'SECOND TERM EXAMINATION', 'THIRD TE
                       <td class="g">{{ mat.nom }}</td><td>{{ max(mat, d) }}</td>
                       @for (p of periodes; track p; let pi = $index) {
                         <td>{{ note(d, l, p, 'composition', mat) }}</td>
-                        @if (di === 0 && mi === 0) { <td class="obs-cell" [attr.rowspan]="nbMatieres(d) + 3">{{ l.observations[pi] }}@if (l.assiduite) { <span class="assid">{{ assid(l.assiduite[pi]) }}</span> }</td> }
+                        @if (di === 0 && mi === 0) { <td class="obs-cell avec-stats" [attr.rowspan]="nbMatieres(d) + 3">{{ l.observations[pi] }}@if (l.assiduite) { <span class="assid">{{ assid(l.assiduite[pi]) }}</span> }
+                          <table class="t stats-classe">
+                            <tr><th>Plus forte</th><td>{{ nombre(d.stats[pi].plusForte) }}</td></tr>
+                            <tr><th>Plus faible</th><td>{{ nombre(d.stats[pi].plusFaible) }}</td></tr>
+                            <tr><th>Moyenne de la classe</th><td>{{ nombre(d.stats[pi].moyenneClasse) }}</td></tr>
+                          </table></td> }
                       }
                     </tr>
                   }
