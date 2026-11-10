@@ -50,6 +50,7 @@ export const FR_COMPOSITION: ModeleReleve = {
       m('edd_vivre_ensemble', 'Vivre ensemble'), m('edd_vdsm', 'VDSM'), m('edd_competence', 'Compétence'),
     ] },
     { nom: 'EPSA', matieres: [m('epsa_arts', 'Arts plastiques')] },
+    
   ],
 };
 
@@ -82,7 +83,7 @@ export const ARABE: ModeleReleve = {
       m('ar_hadith', 'Hadith', { nomAr: 'الحديث' }),
       m('ar_tawhid', 'Tawhid', { nomAr: 'التوحيد' }),
       m('ar_fiqh', 'Jurisprudence', { nomAr: 'الفقه' }),
-      m('ar_sira', ' biographie du Prophète', { nomAr: 'السيرة النبوية' }),
+      m('ar_sira', 'Sîra (biographie du Prophète)', { nomAr: 'السيرة النبوية' }),
       m('ar_dictee', 'Dictée préparée', { nomAr: 'الاملاء المنقول' }),
       m('ar_lecture', 'Lecture', { nomAr: 'القراءة' }),
       m('ar_ecriture', 'Écriture', { nomAr: 'الخط' }),
