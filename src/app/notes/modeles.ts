@@ -12,7 +12,6 @@ export interface Matiere {
   nom: string;       // nom affiché
   nomAr?: string;    // nom arabe (relevé arabe)
   maxFixe?: number;  // note maximale imposée (relevé anglais)
-  niveaux?: string[]; // absent = affichée dans tous les niveaux
 }
 
 export interface Domaine {
@@ -51,7 +50,8 @@ export const FR_COMPOSITION: ModeleReleve = {
       m('edd_vivre_ensemble', 'Vivre ensemble'), m('edd_vdsm', 'VDSM'), m('edd_competence', 'Compétence'),
     ] },
     { nom: 'EPSA', matieres: [m('epsa_arts', 'Arts plastiques')] },
-    
+    { nom: 'Éducation religieuse', matieres: [m('er_ressources', 'Ressources'), m('er_competence', 'Compétence')] },
+    { nom: 'Langue arabe', matieres: [m('la_ressources', 'Ressources'), m('la_competence', 'Compétence')] },
   ],
 };
 
@@ -84,11 +84,12 @@ export const ARABE: ModeleReleve = {
       m('ar_hadith', 'Hadith', { nomAr: 'الحديث' }),
       m('ar_tawhid', 'Tawhid', { nomAr: 'التوحيد' }),
       m('ar_fiqh', 'Jurisprudence', { nomAr: 'الفقه' }),
-      m('ar_sira', 'Biographie du Prophète', { nomAr: 'السيرة النبوية' }),
+      m('ar_sira', 'Sîra (biographie du Prophète)', { nomAr: 'السيرة النبوية' }),
       m('ar_dictee', 'Dictée préparée', { nomAr: 'الاملاء المنقول' }),
       m('ar_lecture', 'Lecture', { nomAr: 'القراءة' }),
-      m('ar_ecriture', 'Écriture', { nomAr: 'الخط', niveaux: ['CE1', 'CE2', 'CM1', 'CM2'] }),
+      m('ar_ecriture', 'Écriture', { nomAr: 'الخط' }),
       m('ar_chant', 'Chant', { nomAr: 'الأناشيد' }),
+      m('ar_texte', 'Vocabulaire', { nomAr: 'النص' }),
       m('ar_grammaire', 'Grammaire', { nomAr: 'النحو' }),
       m('ar_morphologie', 'Morphologie', { nomAr: 'الصرف' }),
       m('ar_prod_ecrits', 'Production d’écrits', { nomAr: 'الإنتاج الكتابي' }),
@@ -119,17 +120,41 @@ export interface ClasseConfig {
   maximums: Record<string, number>;
 }
 
+/**
+ * Matières du relevé arabe absentes selon le niveau.
+ * Pour changer la règle, modifier uniquement ce tableau (codes des matières : voir ARABE ci-dessus).
+ * Les notes déjà saisies pour une matière masquée restent en base mais ne comptent plus.
+ */
+export const ARABE_MATIERES_MASQUEES: Record<string, string[]> = {
+  CI: ['ar_dictee', 'ar_grammaire', 'ar_morphologie', 'ar_sira'],
+  CP: ['ar_dictee', 'ar_grammaire', 'ar_morphologie', 'ar_sira'],
+  CE1: ['ar_ecriture', 'ar_texte'],
+  CE2: ['ar_ecriture', 'ar_texte'],
+  CM1: ['ar_ecriture', 'ar_texte'],
+  CM2: ['ar_ecriture', 'ar_texte'],
+};
+
+const normaliserNiveau = (n?: string) => (n ?? '').toUpperCase().replace(/\s+/g, '');
+
+/** Relevé arabe adapté au niveau (voir ARABE_MATIERES_MASQUEES). */
+function arabePourNiveau(niveau?: string): ModeleReleve {
+  const masquees = ARABE_MATIERES_MASQUEES[normaliserNiveau(niveau)];
+  if (!masquees) return ARABE;
+  return {
+    ...ARABE,
+    domaines: ARABE.domaines.map((d) => ({ ...d, matieres: d.matieres.filter((x) => !masquees.includes(x.code)) })),
+  };
+}
+
 /** Le modèle de relevé à utiliser pour une classe et un bulletin donnés. */
-export function modelePour(classe: Pick<ClasseConfig, 'modele_fr'>, bulletin: BulletinCode): ModeleReleve {
-  if (bulletin === 'ar') return ARABE;
+export function modelePour(classe: Pick<ClasseConfig, 'modele_fr'> & { niveau?: string }, bulletin: BulletinCode): ModeleReleve {
+  if (bulletin === 'ar') return arabePourNiveau(classe.niveau);
   if (bulletin === 'en') return ANGLAIS;
   return classe.modele_fr === 'controle' ? FR_CONTROLE : FR_COMPOSITION;
 }
 
-export function toutesMatieres(modele: ModeleReleve, niveau?: string): Matiere[] {
-  return modele.domaines
-    .flatMap((d) => d.matieres)
-    .filter((mat) => !niveau || !mat.niveaux || mat.niveaux.includes(niveau));
+export function toutesMatieres(modele: ModeleReleve): Matiere[] {
+  return modele.domaines.flatMap((d) => d.matieres);
 }
 
 /** Note maximale d'une matière : imposée (anglais), sinon réglage de la classe, sinon le barème. */
