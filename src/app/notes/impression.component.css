@@ -146,3 +146,9 @@
 
 /* Assiduité (absences / retards) dans les cases d'observation */
 .assid { display: block; margin-top: 3px; font-size: 7.5pt; font-style: normal; color: #444; }
+
+/* Case « plus forte / plus faible / moyenne de la classe » en bas de chaque observation */
+.avec-stats { position: relative; }
+.stats-classe { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; font-size: 8pt; }
+.stats-classe th { text-align: left; font-weight: 700; width: 62%; padding: 2mm 2px; }
+.stats-classe td { font-weight: 700; padding: 2mm 2px; }
