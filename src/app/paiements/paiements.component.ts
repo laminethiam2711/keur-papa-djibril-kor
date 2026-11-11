@@ -4,9 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Classe, Eleve, NotesService } from '../notes/notes.service';
 import { PaiementsService } from './paiements.service';
-import { fcfa, LIBELLE_TYPE, MOIS_SCOLAIRES, moisEchus, nomMois, Paiement, situation, Situation, Tarif } from './regles';
+import { fcfa as formaterFcfa, LIBELLE_TYPE, MOIS_SCOLAIRES, moisEchus, nomMois, Paiement, situation, Situation, Tarif } from './regles';
 
 interface Ligne { eleve: Eleve; classe: Classe; s: Situation; }
+
+const CLE_MASQUE = 'paiements-montants-masques';
+function lireMasque(): boolean {
+  try { return localStorage.getItem(CLE_MASQUE) === '1'; } catch { return false; }
+}
 
 @Component({
   selector: 'app-paiements',
@@ -22,6 +27,7 @@ interface Ligne { eleve: Eleve; classe: Classe; s: Situation; }
           <select class="choix" [ngModel]="annee()" (ngModelChange)="changerAnnee($event)" aria-label="Année scolaire">
             @for (a of annees(); track a) { <option [value]="a">{{ a }}</option> }
           </select>
+          <button type="button" class="np-btn" (click)="basculerMasque()" [attr.aria-pressed]="masque()">{{ masque() ? '👁 Afficher les montants' : '🙈 Masquer les montants' }}</button>
           <a class="np-btn" routerLink="/admin/tarifs">⚙ Tarifs</a>
         </div>
       </div>
@@ -127,6 +133,7 @@ interface Ligne { eleve: Eleve; classe: Classe; s: Situation; }
   `,
   styles: `
     .tete-actions { display: flex; gap: 10px; align-items: center; }
+    .tete-actions button.np-btn { font: inherit; cursor: pointer; }
     .choix { font: inherit; font-size: .9rem; padding: 9px 12px; border: 1px solid #d5dae3; border-radius: 10px; background: #fff; }
     .info { background: #fff4e0; color: #8a5a00; padding: 12px 16px; border-radius: 10px; margin: 0; }
     .chiffres { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; }
@@ -154,7 +161,15 @@ interface Ligne { eleve: Eleve; classe: Classe; s: Situation; }
 export class PaiementsComponent implements OnInit {
   private ps = inject(PaiementsService);
   private ns = inject(NotesService);
-  fcfa = fcfa;
+  /** Montants masqués (choix mémorisé sur cet appareil). */
+  masque = signal(lireMasque());
+  /** Formate un montant, ou le cache quand « Masquer les montants » est actif. */
+  fcfa = (n: number) => (this.masque() ? '•••••• F CFA' : formaterFcfa(n));
+  basculerMasque() {
+    const v = !this.masque();
+    this.masque.set(v);
+    try { localStorage.setItem(CLE_MASQUE, v ? '1' : '0'); } catch { /* stockage indisponible */ }
+  }
 
   annees = signal<string[]>([]);
   annee = signal('');
@@ -258,7 +273,7 @@ export class PaiementsComponent implements OnInit {
     const tel = l.eleve.telephone.replace(/\D/g, '');
     const numero = tel.length === 9 ? '221' + tel : tel;
     const mois = l.s.moisImpayes.map(nomMois).join(', ');
-    const texte = `Bonjour, l'École franco-arabe Keur Papa Djibril Kor vous informe qu'il reste ${fcfa(l.s.retard)} à régler pour ` +
+    const texte = `Bonjour, l'École franco-arabe Keur Papa Djibril Kor vous informe qu'il reste ${formaterFcfa(l.s.retard)} à régler pour ` +
       `${l.eleve.prenom} ${l.eleve.nom} (${l.classe.nom})${mois ? ` — mensualité(s) : ${mois}` : ''}. ` +
       `Merci de passer à l'école ou de payer par Wave / Orange Money. Merci de votre confiance.`;
     return `https://wa.me/${numero}?text=${encodeURIComponent(texte)}`;
